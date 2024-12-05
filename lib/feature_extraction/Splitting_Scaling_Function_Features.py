@@ -1,24 +1,16 @@
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
+import os
 import pandas as pd 
 import numpy as np
+import random as rnd
 
 # Funktion für die Aufteilung der Daten mit den extrahierten Features, dazu wird die Datengröße auf 1 gesetzt und lediglich die Bleche zufällig durchmischt
 # Ein train test split 2 ist somit nicht notwendig bei dieser Funktion 
 # Funktionsweise analog zur Splitting_Scaling_Function Funktion für alle Daten ohne Feature Extraktion
 
-def Split_Scaling(data, size=0.2, random=42, Scaler=StandardScaler , Train_Test_Split=1, Datengröße=1, Speichern=0):
-  
-  from sklearn.model_selection import train_test_split
-  from sklearn.preprocessing import StandardScaler
-  from sklearn.preprocessing import MinMaxScaler
-  import pandas as pd 
-  import numpy as np
-  import random as rnd
-  
-  Ordner = r'C:\Users\corvi\OneDrive - stud.tu-darmstadt.de\Desktop\Masterthesis\13_ExcelvonDaten_Code'
-  
+def Split_Scaling(data: pd.DataFrame, Ordner:str, size=0.2, random=42, Scaler=StandardScaler , Train_Test_Split=1, datasize=1, Speichern: bool=True):
   Columns_drop = ['X_opt-X-Ist','Y_Opt-Y_ist','phi_Opt-phi_ist']
   
   if Train_Test_Split == 1:
@@ -31,7 +23,7 @@ def Split_Scaling(data, size=0.2, random=42, Scaler=StandardScaler , Train_Test_
     
   elif Train_Test_Split == 2:
     
-    #BlechAnzahl = len(data)/Datengröße
+    #BlechAnzahl = len(data)/datasize
     #print(BlechAnzahl)
     #Test_Blechmenge = round(BlechAnzahl * size)
     #print(Test_Blechmenge)
@@ -41,7 +33,7 @@ def Split_Scaling(data, size=0.2, random=42, Scaler=StandardScaler , Train_Test_
     print(Random_Blech)
     Test_data = []
     for i in Random_Blech:
-      single = data.iloc[Datengröße*i:Datengröße*(i+1)]
+      single = data.iloc[datasize*i:datasize*(i+1)]
       #print(single)
       Test_data.append(single)
     
@@ -54,22 +46,23 @@ def Split_Scaling(data, size=0.2, random=42, Scaler=StandardScaler , Train_Test_
     X_train, X_test = df_train.drop(columns = Columns_drop), df_test.drop(columns=Columns_drop)
     Y_train, Y_test = df_train[Columns_drop], df_test[Columns_drop]
     
-    if Speichern ==1:
+    if Speichern:
       for Column1,Column2 in zip(df_test.columns,df_train.columns):
           df_test[Column1] = df_test[Column1].astype(str).str.replace('.', ',')
           df_train[Column2] =df_train[Column2].astype(str).str.replace('.', ',')
-          
-      df_test.to_csv(f'{Ordner}\Testdaten_BlechSplit.csv', index=True, sep=';')
-      df_train.to_csv(f'{Ordner}\Trainingsdaten_BlechSplit.csv', index=True, sep=';')
+      
+      
+      df_test.to_csv(os.path.join(Ordner, 'testdaten.csv'), index=True, sep=';')
+      df_train.to_csv(os.path.join(Ordner, 'trainingsdaten.csv'), index=True, sep=';')
   
   else:
     print('Daten können nicht eingelesen werden. Für Train_Test_Split 1 angeben, um Standard Split durchzuführen. Bei 2 wird ein Split nach Blechen durchgeführt')
     return None
   
     
-  print(len(X_test))
-  print(len(Y_test))
-  print(Scaler)
+  #print(len(X_test))
+  #print(len(Y_test))
+  #print(Scaler)
   # Normalisierung oder Skalierung nur auf den Trainingsdaten anwenden
   # Es werden für die Kraftdaten andere Scaler eingesetzt als für die Positionsdaten aufgrund der unterschiedlichen Einheiten und Größen. Gleiches gilt für Phi, sowie x und y
   scaler_X_position = Scaler()
