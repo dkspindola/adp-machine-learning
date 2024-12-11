@@ -3,7 +3,7 @@
 # Dafür werden die reingeladenen daten aus der Data_for_Modelling Datei in ein Notebook geladen und dieser Funktion in Form von data übergeben 
 # In dieser Funktion werden dann die Zeitreihendaten gebildet, die Daten nach den beiden Evaluationsmetriken aufgeteilt und standardisiert
 
-from PreProcessing_SingleBlech_Function import Preprocessing
+from lib.PreProcessing_SingleBlech_Function import Preprocessing
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split

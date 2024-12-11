@@ -1,4 +1,4 @@
-from Read_Data_SingleBlech import Read_Data
+from lib.Read_Data_SingleBlech import Read_Data
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
