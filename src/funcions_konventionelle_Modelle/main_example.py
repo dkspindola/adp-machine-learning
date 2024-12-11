@@ -1,15 +1,16 @@
+from src.funcions_konventionelle_Modelle.Hyperparametertuning_Konventionell import random_forest_hyperparameter_search
 # Beispielaufruf der Funktionen
 # unnötige Aufrufe können auskommentiert werden
 if __name__ == "__main__":
     #Hyperparametrisierung
-    from Load_Data_for_Modelling import Get_data
+    from lib.Load_Data_for_Modelling import Get_data
     data = Get_data(0, 1800, 0)
     X_train, X_test, Y_train, Y_test = Split_Scaling(data, size=0.1, Train_Test_Split=2, Datengröße=1800, random=5)
     save_dir_hyper = r'C:\Users\corvi\OneDrive - stud.tu-darmstadt.de\Desktop\Masterthesis\14_Modelle_Hyperparameter\Konventionell'
     #Hyperparametertuning mit Random Forest der konventionellen Modelle
     random_forest_hyperparameter_search(data, save_path=save_dir_hyper)
     #Hyperparameter validieren der konventionellen Modelle für Random Forrest
-    validate_best_model_random_forest(rf_random, X_train, X_test, Y_train, Y_test):
+    validate_best_model_random_forest(rf_random, X_train, X_test, Y_train, Y_test)
     #Hyperparametertuning mit K-Neighbour der konventionellen Modelle
     knr_hyperparameter_tuning(data, save_path=save_dir_hyper)
     #Hyperparameter validieren der konventionellen Modelle für K-Neighbours
@@ -23,7 +24,7 @@ if __name__ == "__main__":
 
     #Modellierung
     from Splitting_Scaling_Function_ValData import Split_Scaling
-    from Load_Data_for_Modelling import Get_data
+    from lib.Load_Data_for_Modelling import Get_data
     data = Get_data(0, 1800, 0)
     #Modellierung und Ausgabe
     results_ML = ML(data, ML_Model=4, x_start=0, x_end=1800, size=0.2, Train_Test_Split=2, Datengröße=1800, random=42)

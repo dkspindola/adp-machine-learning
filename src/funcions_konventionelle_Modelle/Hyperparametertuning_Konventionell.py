@@ -4,10 +4,6 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
 import numpy as np
-from Load_Data_for_Modelling import Get_data
-from Splitting_Scaling_Function import Split_Scaling
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import MinMaxScaler
 import os
 import json
 import joblib
@@ -21,22 +17,17 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsRegressor
 import numpy as np
-from Load_Data_for_Modelling import Get_data
-from Splitting_Scaling_Function import Split_Scaling
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import MinMaxScaler
+from lib.Load_Data_for_Modelling import Get_data
 import os
 import json
 import joblib
 from sklearn.metrics import make_scorer, mean_absolute_error
-from Splitting_Scaling_Function import Split_Scaling
+from lib.Splitting_Scaling_Function import Split_Scaling
 
 # Imprt für DesicionTree
 from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
-from Load_Data_for_Modelling import Get_data
-from Splitting_Scaling_Function import Split_Scaling
 
 #Import für SVR
 from sklearn.model_selection import RandomizedSearchCV
@@ -44,8 +35,6 @@ from sklearn.svm import SVR
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.model_selection import GridSearchCV
 import numpy as np
-from Load_Data_for_Modelling import Get_data
-from Splitting_Scaling_Function import Split_Scaling
 
 
 # Random Forest Hyperparametertuning mittels RandomizedSearchCV
