@@ -1,72 +1,77 @@
 import os
 import time
 
+from typing import Tuple
+
 from tabulate import tabulate
 
 import pandas as pd
 from pandas import DataFrame
 
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import MaxAbsScaler
-from sklearn.preprocessing import RobustScaler
-
 from lib.Splitting_Scaling_Function import Split_Scaling
+from lib.Fensterung_Scaling_DeepLearning import Fensterung_Scale
 
-scaler_dict = {'standard': StandardScaler,
-          'minmax': MinMaxScaler,
-          'maxabs': MaxAbsScaler,
-          'robust': RobustScaler
-}
+from src.datacontainer import Datacontainer
 
-def split(data: DataFrame, test_size: float=0.2, scaler: str='standard', seed: int=0, validation: bool=True, batch_split: bool=False, batchsize: int=1800):
-    split_type: int = 1 if not batch_split else 2
+class Splitable:
+    def split(self) -> None:    ...
 
-    if (validation):
-        x_train, x_val, x_test, y_train, y_val, y_test = Split_Scaling(data, test_size, seed, scaler_dict[scaler], 1, split_type, batchsize, save=False)
-        save(x_train, x_test, y_train, y_test, x_val, y_val)
+class Splitting(Splitable, Datacontainer):
+    def __init__(self, loadpath: str, batchsize: int, sep: str, decimal: str) -> None:
+        self.splitted_data: dict[str, DataFrame] = None
+        self.timestamp: int = None
+        super().__init__(loadpath, batchsize, sep, decimal)
 
-    else:
-        x_train, x_test, y_train, y_test = Split_Scaling(data, test_size, seed, scaler_dict[scaler], 0, split_type, batchsize, save=False)
-        save(x_train, x_test, y_train, y_test)
+    def split(self, test_size: float, validation_split: bool, batch_split: bool, seed: int) -> None:
+        if self.data is None: self.load()
 
+        self.timestamp = int(time.time())
 
-def save(x_train: DataFrame, x_test: DataFrame, y_train: DataFrame, y_test: DataFrame, x_val: DataFrame=None, y_val: DataFrame=None):
-    folder = f'build/split/{int(time.time())}'
-    os.makedirs(folder)
+        batch_split_number: int = 2 if batch_split else 1
+        validation_split_number: int = 1 if validation_split else 0
 
-    summarys = [] 
+        splitted_data: Tuple[DataFrame, ...] = Split_Scaling(self.data, test_size, seed, Validation_Data=validation_split_number, standard=batch_split_number, batchsize=self.batchsize,  save=False)
+        keys: list[str] = self.keylist(validation_split)
+        
+        self.splitted_data =  dict(zip(keys, splitted_data))
 
-    x_train_path = os.path.join(folder, 'x-train.csv')
-    x_train.to_csv(x_train_path)
-    summarys.append(summary(x_train, x_train_path))
+        self.splitted_data
 
-    if(x_val is not None):
-        x_val_path: str = os.path.join(folder, 'x-validate.csv')
-        x_val.to_csv(x_val_path)
-        summarys.append(summary(x_val, x_val_path))
+    def save(self, path: str) -> None:
+        folder: str = os.path.join(path, f'{self.timestamp}')
+        os.makedirs(folder)
 
+        for key in self.splitted_data.keys():
+            data: DataFrame = self.splitted_data[key]
+            filepath: str = os.path.join(folder, f'{key}.csv')
+            data.to_csv(filepath)
 
-    x_test_path = os.path.join(folder, 'x-test.csv')
-    x_test.to_csv(x_test_path)
-    summarys.append(summary(x_test, x_test_path))
+    def keylist(self, validation_split: bool) -> list[str]:
+        if validation_split:    return ['x-train', 'x-validate', 'x-test', 'y-train', 'y-validate', 'y-test']
+        else:                   return ['x-train', 'x-test', 'y-train', 'y-test']
 
-    y_train_path = os.path.join(folder, 'y-train.csv')
-    y_train.to_csv(y_train_path)
-    summarys.append(summary(y_train, y_train_path))
+    def print_summary(self):
+        timestamp: list[str] = []
+        filename: list[str] = []
+        shape: list[Tuple[int, int]] = []
 
-    if(y_val is not None):
-        y_val_path: str = os.path.join(folder, 'y-validate.csv')
-        y_val.to_csv(y_val_path)
-        summarys.append(summary(y_val, y_val_path))
+        df: DataFrame = DataFrame()
+        
+        for key in self.splitted_data.keys():
+            print(f'{self.splitted_data[key].info(verbose=False, show_counts=False)}')
 
-    
-    y_test_path = os.path.join(folder, 'y-test.csv')
-    y_test.to_csv(y_test_path)
-    summarys.append(summary(y_test, y_test_path))
+class Windowing(Splitable, Datacontainer):
+    def __init__(self, path: str, batchsize: int, sep: str, decimal: str) -> None:
+        self.splitted_data: dict[str, DataFrame] = None
+        super().__init__(path, batchsize, sep, decimal)
 
-    print(tabulate(summarys, headers='keys', tablefmt='grid'))
+    def split(self, test_size: float, validation_split: bool, batch_split: bool, window_size: int,  seed: int) -> None:
+        if self.data is None: self.load()
+        
+        self.timestamp = int(time.time())
+        
+        batch_split_number: int = 2 if batch_split else 1
+        validation_split_number: int = 1 if validation_split else 0
 
-
-def summary(data: DataFrame, path: str):
-    return {'File': path, 'Size': len(data)}
+        splitted_data: Tuple[DataFrame, ...] = Fensterung_Scale(self.data, window_size=window_size, Datengröße=self.batchsize, size=test_size, Train_Test_Split=batch_split_number, Validation_data=validation_split_number, random=seed)
+        print(splitted_data)
