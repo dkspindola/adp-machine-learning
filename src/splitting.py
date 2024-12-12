@@ -63,7 +63,7 @@ class Splitting(Splitable, Datacontainer):
         for key in self.splitted_data.keys():
             print(f'✔\tSave data to \'{self.filepaths[key]}\'')
             print(f'\tshape:\t{self.splitted_data[key].shape}')
-            print(f'\tmemory:\t{self.splitted_data[key].memory_usage(deep=True, index=False).sum()}')
+            print(f'\tmemory:\t{self.splitted_data[key].memory_usage(deep=True, index=False).sum()} bytes')
             print()
 
 class Windowing(Splitable, Datacontainer):

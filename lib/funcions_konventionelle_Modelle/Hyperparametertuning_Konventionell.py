@@ -126,27 +126,36 @@ def validate_best_model_random_forest(rf_random, X_train, X_test, Y_train, Y_tes
         X_train, X_test, Y_train, Y_test: Die Daten, die durch Get_data bereitgestellt werden.
     '''
     # Beste Parameter und bestes Modell anzeigen
-    print("Beste Parameter:", rf_random.best_params_)
+    #print("Beste Parameter:", rf_random.best_params_)
 
     # Predicte die Variablen 
+    print(f'\tCalculate predictions', end='\r')        
     Y_pred_best_train = rf_random.predict(X_train)
     Y_pred_best_test = rf_random.predict(X_test)
+    print('✔\n')
 
     # MAEs berechnen für die predicteten Values mit den besten Hyperparameter
+    print(f'\tCalculate mean absolute error', end='\r')        
     MAE_best_train = mean_absolute_error(Y_train, Y_pred_best_train, multioutput='raw_values')
     MAE_best_test = mean_absolute_error(Y_test, Y_pred_best_test, multioutput='raw_values')
+    print('✔')
+     #Print des MAEs
+    print(f'\tMAE(training):\t{MAE_best_train}')
+    print(f'\tMAE(test)):\t{MAE_best_test}')
+    print('')
 
     # R2 Score
+    print(f'\tCalculate R2 score', end='\r')        
     r2__best_train = r2_score(Y_train, Y_pred_best_train, multioutput='raw_values')
     r2_best_test = r2_score(Y_test, Y_pred_best_test, multioutput='raw_values')
-
-    #Print des MAEs
-    print(f'MAE für die Trainingsdaten des best fits: {MAE_best_train}')
-    print(f'MAE für die Testdaten des best fits: {MAE_best_test}')
-
+    print('✔')
     #Print des R2
-    print(f'R2-Score für die Trainingsdaten des best fits: {r2__best_train}')
-    print(f'R2-Score für die Testdaten des best fits: {r2_best_test}')
+    print(f'\tR2(training):\t{r2__best_train}')
+    print(f'\tR2(test):\t{r2_best_test}')
+    print('')
+
+    
+
 
 
 #Hyperparametertuning mittels K-Neighbours

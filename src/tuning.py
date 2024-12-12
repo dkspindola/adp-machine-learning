@@ -66,12 +66,18 @@ class RandomForest(Tunable):
             print(f'\tLoad model \'{self.model_path}\'', end='\r')
             self.load_model()
             print('✔')
+            params = self.model.best_params_
+            print(f'\tn_estimators:\t{params['n_estimators']}')
+            print(f'\tmin_samples_split:\t{params['min_samples_split']}')
+            print(f'\tmin_samples_leaf:\t{params['min_samples_leaf']}')
+            print(f'\tmax_features:\t{params['max_features']}')
+            print(f'\tmax_depth:\t{params['max_depth']}')
+            print(f'\tbootstrap:\t{params['bootstrap']}')
 
         print()
 
     def load_model(self) -> None:
         self.model: dict = joblib.load(self.model_path)
-
 
     def load_config(self) -> None:
         file = open(self.config_path, 'r')
