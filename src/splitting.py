@@ -20,6 +20,8 @@ class Splitting(Splitable, Datacontainer):
     def __init__(self, loadpath: str, batchsize: int, sep: str, decimal: str) -> None:
         self.splitted_data: dict[str, DataFrame] = None
         self.timestamp: int = None
+
+        self.filepaths: dict[str] = {}
         super().__init__(loadpath, batchsize, sep, decimal)
 
     def split(self, test_size: float, validation_split: bool, batch_split: bool, seed: int) -> None:
@@ -44,6 +46,7 @@ class Splitting(Splitable, Datacontainer):
         for key in self.splitted_data.keys():
             data: DataFrame = self.splitted_data[key]
             filepath: str = os.path.join(folder, f'{key}.csv')
+            self.filepaths[key] = filepath
             data.to_csv(filepath)
 
     def keylist(self, validation_split: bool) -> list[str]:
@@ -58,7 +61,10 @@ class Splitting(Splitable, Datacontainer):
         df: DataFrame = DataFrame()
         
         for key in self.splitted_data.keys():
-            print(f'{self.splitted_data[key].info(verbose=False, show_counts=False)}')
+            print(f'✔\tSave data to \'{self.filepaths[key]}\'')
+            print(f'\tshape:\t{self.splitted_data[key].shape}')
+            print(f'\tmemory:\t{self.splitted_data[key].memory_usage(deep=True, index=False).sum()}')
+            print()
 
 class Windowing(Splitable, Datacontainer):
     def __init__(self, path: str, batchsize: int, sep: str, decimal: str) -> None:
