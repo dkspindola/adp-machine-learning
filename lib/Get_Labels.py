@@ -38,6 +38,6 @@ def Get_Label(Speichern=0):
             Labels[Column] = Labels[Column].astype(str).str.replace('.', ',')
 
         #print(type(Labels['phi_Opt-phi_ist'].iat[2]))
-        Labels.to_csv(f'{Ordner}\Labels_Angepasst_fuerModellierung.csv', index=False, sep=';') # Umgerechnete Labels werden in eine neue Excel geladen, am gleichen Ort an dem die vorherige Datei Labels gespeichert ist
+        #Labels.to_csv(f'{Ordner}\Labels_Angepasst_fuerModellierung.csv', index=False, sep=';') # Umgerechnete Labels werden in eine neue Excel geladen, am gleichen Ort an dem die vorherige Datei Labels gespeichert ist
     
     return Labels
