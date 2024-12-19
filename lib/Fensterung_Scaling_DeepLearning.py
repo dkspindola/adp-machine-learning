@@ -65,7 +65,7 @@ def Fensterung_Scale(data, interpoliertesdf=None, window_size = 10, Datengröße
         #print(n)
         # Extrahiere jedes einzelne Blech aus dem gesamten Dataframe aller Bleche
         einzelnes_Blech = data.iloc[n*Datengröße:(n+1)*Datengröße]
-        ##print(einzelnes_Blech)
+        #print(einzelnes_Blech)
         # Aufteilung in Features und Labels
         X = einzelnes_Blech.drop(columns=Columns_drop)
         Y = einzelnes_Blech[Columns_drop]

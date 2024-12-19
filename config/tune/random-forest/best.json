@@ -8,6 +8,6 @@
         "min_samples_leaf": [1, 2],
         "bootstrap": [false, true]
     },
-    "n_iter": 10,
+    "n_iter": 3,
     "cv": 3
 }
