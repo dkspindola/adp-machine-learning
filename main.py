@@ -3,53 +3,14 @@ import argparse
 import pandas as pd
 from pandas import DataFrame
 from src.datacontainer import Datacontainer
+from src.model import train
 
-from src.splitting import Splitting, Windowing
-from src.tuning import RandomForest
-
-def split(loadpath: str, test_size: int, validate: bool, batchsize: int, batch_split: bool, windowing: bool, window_size: int, savepath: str, seed: int):
-    if windowing:
-        splitable = Windowing(loadpath, batchsize, sep=';', decimal=',')
-        splitable.split(test_size, validate, batch_split, window_size, seed)
-    else:
-        splitable = Splitting(loadpath, batchsize, sep=';', decimal=',')
-        splitable.split(test_size, validate, batch_split, seed)
-        splitable.save(savepath)
-        splitable.print_summary()
-
-def tune(timestamp: int, config: str, verbose: int, n_jobs: int, seed: int, return_train_score: bool) -> None:
-    x_train: Datacontainer = Datacontainer(os.path.join('build/split', str(timestamp), 'x-train.csv'), batchsize=None, sep=',', decimal='.')
-    y_train: Datacontainer = Datacontainer(os.path.join('build/split', str(timestamp), 'y-train.csv'), batchsize=None, sep=',', decimal='.')
-
-    x_train.load()
-    y_train.load()
-
-    random_forest = RandomForest(config_name=config)
-    random_forest.tune(x_train.data, y_train.data, verbose, n_jobs, seed, return_train_score)
-
-def validate(model: int, data: int):
-    random_forest = RandomForest(model_id=model)
-    random_forest.load()
-
-    x_train: Datacontainer = Datacontainer(os.path.join('build/split', str(data), 'x-train.csv'), batchsize=None, sep=',', decimal='.')
-    y_train: Datacontainer = Datacontainer(os.path.join('build/split', str(data), 'y-train.csv'), batchsize=None, sep=',', decimal='.')
-    x_test: Datacontainer = Datacontainer(os.path.join('build/split', str(data), 'x-test.csv'), batchsize=None, sep=',', decimal='.')
-    y_test: Datacontainer = Datacontainer(os.path.join('build/split', str(data), 'y-test.csv'), batchsize=None, sep=',', decimal='.')
-
-    x_train.load()
-    y_train.load()
-    x_test.load()
-    y_test.load()
-
-    random_forest.validate(x_train.data, y_train.data, x_test.data, y_test.data)
-
-
+from src.splitting import split
+from src.tuning import tune, validate
 
 def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest='command')
-
-    #train_parser = subparsers.add_parser("train", help="Train the model")
 
     #test_parser = subparsers.add_parser("test", help="Test the model")
 
@@ -60,8 +21,6 @@ def main():
     split_parser.add_argument("--test_size", default=0.2, help="Path to load the data from", type=float)
     split_parser.add_argument('--validate', action='store_true', help='Whether or not to split test data')
     split_parser.add_argument('--batch_split', action='store_true', help='Respect the batches while splitting')
-    split_parser.add_argument('--windowing', action='store_true', help='Do windowing while splitting')
-    split_parser.add_argument('--window_size', default=10, help='Size of window', type=int)
     split_parser.add_argument('--save', default='build/split', help='Path to save splitted data to')
     split_parser.add_argument('--seed', default=42, help='Seed for random number generation')
 
@@ -79,13 +38,17 @@ def main():
     validate_parser.add_argument('--model', help='Timestamp of model', type=int)
     validate_parser.add_argument('--data', help='Timestamp of train/test data', type=int)
 
-
+    #TRAIN
+    train_parser = subparsers.add_parser("train", help="Train CNN model")
+    #train_parser.add_argument('--windowing', action='store_true', help='Do windowing while splitting')
+    #train_parser.add_argument('--window_size', default=10, help='Size of window', type=int)
 
     args = parser.parse_args()
 
     function: dict = {'split': lambda: split(args.data, args.test_size, args.validate, args.batchsize, args.batch_split, args.windowing, args.window_size, args.save, args.seed),
                       'tune': lambda: tune(args.data, args.config, args.verbose, args.n_jobs, args.seed, args.return_train_score),
-                      'validate': lambda: validate(args.model, args.data)}
+                      'validate': lambda: validate(args.model, args.data), 
+                      'train': lambda: train()}
     
     function[args.command]()
 

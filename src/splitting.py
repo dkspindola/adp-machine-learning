@@ -81,3 +81,10 @@ class Windowing(Splitable, Datacontainer):
 
         splitted_data: Tuple[DataFrame, ...] = Fensterung_Scale(self.data, window_size=window_size, Datengröße=self.batchsize, size=test_size, Train_Test_Split=batch_split_number, Validation_data=validation_split_number, random=seed)
         print(splitted_data)
+
+
+def split(loadpath: str, test_size: int, validate: bool, batchsize: int, batch_split: bool, savepath: str, seed: int):
+    splitable = Splitting(loadpath, batchsize, sep=';', decimal=',')
+    splitable.split(test_size, validate, batch_split, seed)
+    splitable.save(savepath)
+    splitable.print_summary()

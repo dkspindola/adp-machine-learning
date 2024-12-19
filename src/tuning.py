@@ -13,6 +13,7 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.base import BaseEstimator
 
+from src.datacontainer import Datacontainer
 from lib.funcions_konventionelle_Modelle.Hyperparametertuning_Konventionell import validate_best_model_random_forest
 
 class Tunable():
@@ -106,3 +107,31 @@ class RandomForest(Tunable):
 
     def validate(self, x_train: DataFrame, y_train: DataFrame, x_test: DataFrame, y_test: DataFrame) -> None:
         validate_best_model_random_forest(self.model, x_train, x_test, y_train, y_test)
+
+
+def validate(model: int, data: int):
+    random_forest = RandomForest(model_id=model)
+    random_forest.load()
+
+    x_train: Datacontainer = Datacontainer(os.path.join('build/split', str(data), 'x-train.csv'), batchsize=None, sep=',', decimal='.')
+    y_train: Datacontainer = Datacontainer(os.path.join('build/split', str(data), 'y-train.csv'), batchsize=None, sep=',', decimal='.')
+    x_test: Datacontainer = Datacontainer(os.path.join('build/split', str(data), 'x-test.csv'), batchsize=None, sep=',', decimal='.')
+    y_test: Datacontainer = Datacontainer(os.path.join('build/split', str(data), 'y-test.csv'), batchsize=None, sep=',', decimal='.')
+
+    x_train.load()
+    y_train.load()
+    x_test.load()
+    y_test.load()
+
+    random_forest.validate(x_train.data, y_train.data, x_test.data, y_test.data)
+
+
+def tune(timestamp: int, config: str, verbose: int, n_jobs: int, seed: int, return_train_score: bool) -> None:
+    x_train: Datacontainer = Datacontainer(os.path.join('build/split', str(timestamp), 'x-train.csv'), batchsize=None, sep=',', decimal='.')
+    y_train: Datacontainer = Datacontainer(os.path.join('build/split', str(timestamp), 'y-train.csv'), batchsize=None, sep=',', decimal='.')
+
+    x_train.load()
+    y_train.load()
+
+    random_forest = RandomForest(config_name=config)
+    random_forest.tune(x_train.data, y_train.data, verbose, n_jobs, seed, return_train_score)
