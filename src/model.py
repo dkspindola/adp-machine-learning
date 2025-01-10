@@ -8,7 +8,7 @@ from pandas import read_csv, DataFrame
 from lib.Fensterung_Scaling_DeepLearning import Fensterung_Scale
 from lib.functions_CNN_Modelle.model import build_model
 from src.datacontainer import Datacontainer
-from callback import EarlyStopOnHighValLoss
+from src.callback import EarlyStopOnHighValLoss
 
 
 class Model:
@@ -70,7 +70,7 @@ class CNN(Model):
         history = best_model.fit(X_train_scaled, [Y_train[:, 0], Y_train[:, 1], Y_train[:, 2]],
                                  epochs=50,
                                  validation_data=(X_test_scaled,[Y_test[:, 0], Y_test[:, 1], Y_test[:, 2]]),
-                                 callbacks=[self.early_stopping])
+                                 callbacks=[keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)])
 
         # Speichern des Modells
         model_pfad = os.path.join(self.directory, 'best_model_CNN_60Trials_Interpolation.h5')
