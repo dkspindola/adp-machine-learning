@@ -3,7 +3,7 @@ import argparse
 import pandas as pd
 from pandas import DataFrame
 from src.datacontainer import Datacontainer
-from src.model import train
+from src.model import train, test
 
 from src.splitting import split
 from src.tuning import tune, validate
@@ -38,17 +38,23 @@ def main():
     validate_parser.add_argument('--model', help='Timestamp of model', type=int)
     validate_parser.add_argument('--data', help='Timestamp of train/test data', type=int)
 
+    #CNN_TEST
+    cnn_parser = subparsers.add_parser('cnn', help='CNN validation')
+    cnn_parser.add_argument('--model', help='Filename of model', type=str)
+
     #TRAIN
     train_parser = subparsers.add_parser("train", help="Train CNN model")
     #train_parser.add_argument('--windowing', action='store_true', help='Do windowing while splitting')
     #train_parser.add_argument('--window_size', default=10, help='Size of window', type=int)
+
 
     args = parser.parse_args()
 
     function: dict = {'split': lambda: split(args.data, args.test_size, args.validate, args.batchsize, args.batch_split, args.windowing, args.window_size, args.save, args.seed),
                       'tune': lambda: tune(args.data, args.config, args.verbose, args.n_jobs, args.seed, args.return_train_score),
                       'validate': lambda: validate(args.model, args.data), 
-                      'train': lambda: train()}
+                      'train': lambda: train(), 
+                      'cnn': lambda: test(args.model)}
     
     function[args.command]()
 
