@@ -49,10 +49,10 @@ if __name__ == "__main__":
 
     #Neuronale Netze
     #Imports
-    from Fensterung_Scaling_DeepLearning import Fensterung_Scale
+    from Fensterung_Scaling_DeepLearning import windowing_scale
     from Load_Data_for_Modelling import Get_data
     data = Get_data(0, 1800, 0,1)
-    X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled, Y_train, Y_val, Y_test, scalers_features, scaler_labels, Angepasste_Blechnummern_test = Fensterung_Scale(Data, Validation_data=1, random=7, Train_Test_Split=2, window_size=10)
+    X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled, Y_train, Y_val, Y_test, scalers_features, scaler_labels, Angepasste_Blechnummern_test = windowing_scale(Data, Validation_data=1, random=7, Train_Test_Split=2, window_size=10)
     import numpy as np
 
     # Bevor die Daten für die Hyperparametersuche verwendet werden müssen die Labels "gesqueezed" werden für ein eindimensionales Array
@@ -91,9 +91,9 @@ if __name__ == "__main__":
    
     # Falls Validations Daten benötigt werden ohne Interpolation 
 
-    X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled, Y_train, Y_val, Y_test, scalers_features, scaler_labels, Angepasste_Blechnummern_test = Fensterung_Scale(data, Validation_data=1, random=8, Train_Test_Split=2, window_size=10)
+    X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled, Y_train, Y_val, Y_test, scalers_features, scaler_labels, Angepasste_Blechnummern_test = windowing_scale(data, Validation_data=1, random=8, Train_Test_Split=2, window_size=10)
     # Falls Validations Daten benötigt und interpoliert wird
-    X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled, Y_train, Y_val, Y_test, scalers_features, scaler_labels, X_test_scaled_int, Y_test_interpolation, Blechnummern_Test_Int = Fensterung_Scale(df_Int, interpoliertesdf=Interpoliertes_df, Validation_data=1, random=8, Train_Test_Split=2, window_size=10, Interpolation=1)
+    X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled, Y_train, Y_val, Y_test, scalers_features, scaler_labels, X_test_scaled_int, Y_test_interpolation, Blechnummern_Test_Int = windowing_scale(df_Int, interpoliertesdf=Interpoliertes_df, Validation_data=1, random=8, Train_Test_Split=2, window_size=10, Interpolation=1)
     # Falls keine Validationsdaten benötigt werden 
     #X_train_scaled, X_test_scaled, Y_train_scaled, Y_test_scaled, Y_train, Y_test, scalers_features, scaler_labels = Fensterung_Scale(Validation_data=0, random=42)
 

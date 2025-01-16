@@ -3,7 +3,7 @@ from keras import layers
 
 
 # Keras Modell definieren
-def build_model(hp, window_size, n_features):
+def build_model(hp, window_size=10, n_features=11):
     
     # CInputs Layer definieren (10er Window Size, 11 Features), wenn Window Size angepasst wird, hier auch anpassen
     input_layer = layers.Input(shape=(window_size,n_features))
@@ -61,9 +61,9 @@ def build_model(hp, window_size, n_features):
         
 
     # Output Layers definieren
-    X_output = layers.Dense(1, activation='linear', name='Verstellweg_X')(y)
-    Y_output = layers.Dense(1, activation='linear', name='Verstellweg_Y')(y)
-    Phi_output = layers.Dense(1, activation='linear', name='Verstellweg_Phi')(y)
+    X_output = layers.Dense(1, activation='linear', name='x')(y)
+    Y_output = layers.Dense(1, activation='linear', name='y')(y)
+    Phi_output = layers.Dense(1, activation='linear', name='phi')(y)
 
     # Liste erstellen für alle Outputs
     outputs = [X_output, Y_output, Phi_output]
@@ -74,7 +74,7 @@ def build_model(hp, window_size, n_features):
     # Kompilieren des Modells
     model.compile(optimizer=keras.optimizers.Adam(learning_rate), 
                 loss=['mean_absolute_error', 'mean_absolute_error', 'mean_absolute_error'], 
-                metrics={'Verstellweg_X': 'mae', 'Verstellweg_Y': 'mae', 'Verstellweg_Phi': 'mae'})
+                metrics={'x': 'mae', 'y': 'mae', 'phi': 'mae'})
 
     # Modell zusammenfassen
     model.summary()

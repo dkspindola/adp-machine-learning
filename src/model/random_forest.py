@@ -1,3 +1,4 @@
+from src.model.machine_learning_model import MachineLearningModel
 import os
 import json
 import joblib
@@ -13,14 +14,10 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.base import BaseEstimator
 
-from src.datacontainer import Datacontainer
+from data.data_container import Datacontainer
 from lib.funcions_konventionelle_Modelle.Hyperparametertuning_Konventionell import validate_best_model_random_forest
 
-class Tunable():
-    def tune() -> None: ...
-
-
-class RandomForest(Tunable):
+class RandomForest(MachineLearningModel):
     CONFIG_PATH = 'config/tune/random-forest/{}.json'
     MODEL_PATH = 'build/tune/random-forest/{}/model.pkl'
     BEST_PARAMS_PATH = 'build/tune/random-forest/{}/best-params.json'
@@ -41,8 +38,8 @@ class RandomForest(Tunable):
 
     def save(self) -> None:
         # Create folder
-        self.best_params_path = RandomForest.BEST_PARAMS_PATH.format(self.timestamp)
-        self.model_path = RandomForest.MODEL_PATH.format(self.timestamp)
+        self.best_params_path = self.BEST_PARAMS_PATH.format(self.timestamp)
+        self.model_path = self.MODEL_PATH.format(self.timestamp)
 
         os.makedirs(os.path.dirname(self.best_params_path))
 

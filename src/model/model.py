@@ -7,8 +7,8 @@ import kerastuner
 from pandas import read_csv, DataFrame
 from lib.Fensterung_Scaling_DeepLearning import Fensterung_Scale
 from lib.functions_CNN_Modelle.model import build_model
-from src.datacontainer import Datacontainer
-from src.callback import EarlyStopOnHighValLoss
+from data.data_container import Datacontainer
+from process.callback.early_stop_on_high_val_loss import EarlyStopOnHighValLoss
 
 
 class Model:
@@ -25,6 +25,7 @@ class CNN(Model):
                                 executions_per_trial=1,
                                 directory=directory,
                                 project_name='CNN_Hyperparametertuning_BayesianOptimization')
+        
     def test(filename: str):
         model = keras.models.load_model(filename)
         print(model.summary())
