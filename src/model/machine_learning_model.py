@@ -1,0 +1,6 @@
+from src.serialize import Serializable
+from pandas import DataFrame
+
+class MachineLearningModel(Serializable):
+    def fit(self, data: DataFrame) -> None: ...
+    def find(self, data: DataFrame) -> None: ...

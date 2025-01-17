@@ -189,7 +189,20 @@ def bayesian_hyperparameter_search(X_train_scaled, Y_train, X_val_scaled, Y_val,
     early_stop_on_high_val_loss = EarlyStopOnHighValLoss(threshold=2.5, patience=3)  
 
     # Hyperparametersuche durchführen mit Validationsdaten validieren
-    tuner.search(X_train_scaled, [Y_train[:, 0], Y_train[:, 1], Y_train[:, 2]],
+    tuner.search(X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled, Y_train, Y_val, Y_test, scalers_features, scaler_labels, Angepasste_Blechnummern_test = Fensterung_Scale(data, Validation_data=1, random=42, Train_Test_Split=2, window_size=10)
+        Y_train = np.squeeze(Y_train)
+        Y_test = np.squeeze(Y_test)
+        Y_val =np.squeeze(Y_val)
+        Y_train_scaled = np.squeeze(Y_train_scaled)
+        Y_val_scaled = np.squeeze(Y_val_scaled)      
+        # Modell mit den besten Hyperparametern aufbauen trainieren und testen
+        return model.fit(X_train_scaled, [Y_train[:, 0], Y_train[:, 1], Y_train[:, 2]],
+                                 epochs=50,
+                                 validation_data=(X_test_scaled,[Y_test[:, 0], Y_test[:, 1], Y_test[:, 2]]),
+                                 callbacks=[keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)])X_train_scaled
+                                 
+                                 
+                                 , [Y_train[:, 0], Y_train[:, 1], Y_train[:, 2]],
                 epochs=30,
                 validation_data=(X_val_scaled, [Y_val[:, 0], Y_val[:, 1], Y_val[:, 2]]),
                 callbacks=[early_stopping,early_stop_on_high_val_loss])

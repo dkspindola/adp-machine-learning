@@ -7,8 +7,8 @@ import kerastuner
 from pandas import read_csv, DataFrame
 from lib.Fensterung_Scaling_DeepLearning import Fensterung_Scale
 from lib.functions_CNN_Modelle.model import build_model
-from src.datacontainer import Datacontainer
-from callback import EarlyStopOnHighValLoss
+from data.data_container import Datacontainer
+from process.callback.early_stop_on_high_val_loss import EarlyStopOnHighValLoss
 
 
 class Model:
@@ -25,9 +25,27 @@ class CNN(Model):
                                 executions_per_trial=1,
                                 directory=directory,
                                 project_name='CNN_Hyperparametertuning_BayesianOptimization')
+        
+    def test(filename: str):
+        model = keras.models.load_model(filename)
+        print(model.summary())
 
-    def train(self, data: DataFrame):
-        X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled, Y_train, Y_val, Y_test, scalers_features, scaler_labels, Angepasste_Blechnummern_test = Fensterung_Scale(data, Validation_data=1, random=7, Train_Test_Split=2, window_size=10)
+    def train(self, model, data: DataFrame):
+        X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled, Y_train, Y_val, Y_test, scalers_features, scaler_labels, Angepasste_Blechnummern_test = Fensterung_Scale(data, Validation_data=1, random=42, Train_Test_Split=2, window_size=10)
+        Y_train = np.squeeze(Y_train)
+        Y_test = np.squeeze(Y_test)
+        Y_val =np.squeeze(Y_val)
+        Y_train_scaled = np.squeeze(Y_train_scaled)
+        Y_val_scaled = np.squeeze(Y_val_scaled)      
+        # Modell mit den besten Hyperparametern aufbauen trainieren und testen
+        return model.fit(X_train_scaled, [Y_train[:, 0], Y_train[:, 1], Y_train[:, 2]],
+                                 epochs=50,
+                                 validation_data=(X_test_scaled,[Y_test[:, 0], Y_test[:, 1], Y_test[:, 2]]),
+                                 callbacks=[keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)])
+
+
+    def find(self, data: DataFrame):
+        X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled, Y_train, Y_val, Y_test, scalers_features, scaler_labels, Angepasste_Blechnummern_test = Fensterung_Scale(data, Validation_data=1, random=42, Train_Test_Split=2, window_size=10)
        
         Y_train = np.squeeze(Y_train)
         Y_test = np.squeeze(Y_test)
@@ -44,7 +62,7 @@ class CNN(Model):
         best_hyperparameters = best_hps.values
         hyperparameters_pfad = os.path.join(self.directory, 'best_hyperparameters_CNN_Bayesian_30Trials_Interpolation.json')
         with open(hyperparameters_pfad, 'w') as json_file:
-            json.dump(best_hyperparameters, json_file)
+            json.dump(best_hyperparameters, json_file, indent=4)
 
         # Printe alle Hyperparameters
         print("All available hyperparameters:")
@@ -65,12 +83,9 @@ class CNN(Model):
             print(f"Best units_dense{i}: {best_hps.get(f'units_dense{i}')}")
             print(f"Best activation_dense{i}: {best_hps.get(f'activation_dense{i}')}")
 
-        # Modell mit den besten Hyperparametern aufbauen trainieren und testen
         best_model = self.tuner.hypermodel.build(best_hps)
-        history = best_model.fit(X_train_scaled, [Y_train[:, 0], Y_train[:, 1], Y_train[:, 2]],
-                                 epochs=50,
-                                 validation_data=(X_test_scaled,[Y_test[:, 0], Y_test[:, 1], Y_test[:, 2]]),
-                                 callbacks=[self.early_stopping])
+
+        history = self.train(best_model, data)
 
         # Speichern des Modells
         model_pfad = os.path.join(self.directory, 'best_model_CNN_60Trials_Interpolation.h5')
@@ -92,11 +107,24 @@ class CNN(Model):
         self.tuner.search(X_train_scaled, [Y_train[:, 0], Y_train[:, 1], Y_train[:, 2]], epochs=30, validation_data=(X_val_scaled, [Y_val[:, 0], Y_val[:, 1], Y_val[:, 2]]), callbacks=[keras.callbacks.EarlyStopping(monitor='val_loss', patience=3), EarlyStopOnHighValLoss(threshold=2.5, patience=3)])
 
     def hypermodel(self, hp):
-        return build_model(hp)
+        return build_model(hp, 10, 11)
 
     
 def train():
     data = read_csv('assets/data.csv', sep=';', decimal=',')
     model = CNN('build/tune/cnn')
-    return model.train(data)
+    return model.find(data)
+
+def test(filename: str):
+
+    data = read_csv('assets/data.csv', sep=';', decimal=',')
+    cnn = CNN('build/tune/cnn')
+    model = keras.models.load_model(filename)
+    # Recompile the model with the same optimizer, loss, and metrics used during training
+    model.compile(optimizer=keras.optimizers.Adam(), 
+                loss=['mean_absolute_error', 'mean_absolute_error', 'mean_absolute_error'], 
+                metrics={'Verstellweg_X': 'mae', 'Verstellweg_Y': 'mae', 'Verstellweg_Phi': 'mae'})
+    # Modell zusammenfassen
+    model.summary()
     
+    return cnn.train(model, data)
