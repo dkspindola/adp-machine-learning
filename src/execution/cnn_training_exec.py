@@ -5,10 +5,6 @@ import keras
 
 class CNNTrainingExecution:
     @classmethod
-    def execute(cls):
-        csv=CSV.from_file('assets/data.csv', sep=';', decimal=',')
-        cnn = CNN()
-        cnn.load('build/tune/1737063960/best-model.h5')
-        cnn.fit(csv.df, optimizer=keras.optimizers.Adam(), loss=['mean_absolute_error', 'mean_absolute_error', 'mean_absolute_error'], metrics={'x': 'mae', 'y': 'mae', 'phi': 'mae'})
-        
-        
+    def execute(cls, model_file: str, data_folder: str):
+        cnn = CNN.from_file(model_file)
+        cnn.fit(data_folder, optimizer=keras.optimizers.Adam(), loss=['mean_absolute_error', 'mean_absolute_error', 'mean_absolute_error'], metrics={'x': 'mae', 'y': 'mae', 'phi': 'mae'})

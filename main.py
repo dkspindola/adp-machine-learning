@@ -28,18 +28,18 @@ def main():
 
     #TRAIN
     train_parser = subparsers.add_parser('train', help='Model training')
-    train_parser.add_argument('--model', type=str)
+    train_parser.add_argument('--model_file', type=str)
+    train_parser.add_argument('--data_folder', type=str)
 
     args = parser.parse_args()
 
     function: dict = {'split': lambda: DataSplittingExecution.execute(args.data, args.batch_split, args.validation_split, args.test_size, args.seed, args.batchsize),
                       'tune': lambda: CNNTuningExecution.execute(args.data_folder, ts=args.timestamp),
                       'window_split': lambda: WindowSplittingExecution.execute(args.data, args.batch_split, args.validation_split, args.test_size, args.seed, args.batchsize, args.interpolation, args.window_size),
-                      'train': lambda: CNNTrainingExecution.execute()}
+                      'train': lambda: CNNTrainingExecution.execute(args.model_file, args.data_folder)}
     
     function[args.command]()
 
 
 if __name__ == "__main__":
     main()
-    print('\tDone!')

@@ -34,9 +34,6 @@ class CNN(Model):
         X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled, Y_train, Y_val, Y_test, scalers_features, scaler_labels, Angepasste_Blechnummern_test = Fensterung_Scale(data, Validation_data=1, random=42, Train_Test_Split=2, window_size=10)
         Y_train = np.squeeze(Y_train)
         Y_test = np.squeeze(Y_test)
-        Y_val =np.squeeze(Y_val)
-        Y_train_scaled = np.squeeze(Y_train_scaled)
-        Y_val_scaled = np.squeeze(Y_val_scaled)      
         # Modell mit den besten Hyperparametern aufbauen trainieren und testen
         return model.fit(X_train_scaled, [Y_train[:, 0], Y_train[:, 1], Y_train[:, 2]],
                                  epochs=50,
