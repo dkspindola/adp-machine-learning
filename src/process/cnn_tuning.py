@@ -40,10 +40,11 @@ class CNNTuning(Process,Serializable):
         self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_TRAIN.value + '.npy')))
         self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_VALIDATE.value + '.npy')))
 
-    def save(self, file: str):
+    def save(self, folder: str):
         # Speichere Hyperparameter in einer JSON Datei
         best = self.hyperparameters[0]
         best_hyperparameters = best.values
+        file = os.path.join(folder, 'best-hyperparameters.json')
         with open(file, 'w') as json_file:
             json.dump(best_hyperparameters, json_file, indent=4)
 
@@ -66,9 +67,12 @@ class CNNTuning(Process,Serializable):
             print(f"Best units_dense{i}: {best.get(f'units_dense{i}')}")
             print(f"Best activation_dense{i}: {best.get(f'activation_dense{i}')}")
 
-        '''
+        
         best_model = self.tuner.hypermodel.build(best)
-
+        model_pfad = os.path.join(folder, 'best-model.h5')
+        best_model.save(model_pfad)
+        
+        '''
         history = self.train(best_model, data)
 
         # Speichern des Modells

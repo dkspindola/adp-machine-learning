@@ -116,6 +116,7 @@ def train():
     return model.find(data)
 
 def test(filename: str):
+
     data = read_csv('assets/data.csv', sep=';', decimal=',')
     cnn = CNN('build/tune/cnn')
     model = keras.models.load_model(filename)

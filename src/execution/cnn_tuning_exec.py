@@ -7,13 +7,13 @@ from src.util import timestamp
 
 class CNNTuningExecution:
     @classmethod
-    def execute(cls, data_folder: str, objective: str='val_loss', max_trials: int=30):
-        path = os.path.join('build', 'tune', timestamp())
+    def execute(cls, data_folder: str, objective: str='val_loss', max_trials: int=30, ts: int=None):
+        path = os.path.join('build', 'tune', timestamp() if ts is None else str(ts))
         tuner = BayesianOptimization(CNN.hypermodel, objective, max_trials, executions_per_trial=1, directory=path, project_name='search')
 
         process = CNNTuning(tuner)
         process.load(data_folder)
         process.start()
-        process.save()
+        process.save(path)
 
     
