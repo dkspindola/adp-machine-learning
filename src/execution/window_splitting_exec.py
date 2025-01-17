@@ -15,7 +15,6 @@ class WindowSplittingExecution:
                      ):
         
         process = WindowSplitting(batch_split, validation_split, interpolation)
-
         process.load(data_file)
         process.start(test_size, seed, batchsize, window_size)
         process.save(os.path.join('build', 'split', timestamp()))
