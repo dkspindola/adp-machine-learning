@@ -28,11 +28,12 @@ class CNN(MachineLearningModel):
         self.model = keras.models.load_model(file)
 
     def save(self, file: str):
+        os.makedirs(os.path.dirname(file), exist_ok=True)
         self.model.save(file)
         
-    def fit(self, data_folder: str, optimizer: Optimizer, loss: list[str], metrics: dict[str, str]):
+    def fit(self, data_file: str, optimizer: Optimizer, loss: list[str], metrics: dict[str, str]):
         self.model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
-        self.load_data(data_folder)
+        self.load_data(data_file)
 
         x_train_scaled, x_test_scaled = self.data[0].array, self.data[1].array
         y_train, y_test = self.data[2].array, self.data[3].array
@@ -44,9 +45,22 @@ class CNN(MachineLearningModel):
                        epochs=50, validation_data=(x_test_scaled,[y_test[:, 0], y_test[:, 1], y_test[:, 2]]),
                        callbacks=[keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)])
         
+    def validate(self, data_folder: str):
+        self.load_data(data_folder)
+
+        x_val_scaled = self.data[4].array
+        y_val_scaled = self.data[5].array
+
+        y_val_scaled = np.squeeze(y_val_scaled)
+        
+        results = self.model.evaluate(x_val_scaled, [y_val_scaled[:, 0], y_val_scaled[:, 1], y_val_scaled[:, 2]], return_dict=True)
+        return results
+
     def load_data(self, folder: str):
         self.data = []
         self.data.append(NPY.from_file(os.path.join(folder, DataType.X_TRAIN_SCALED.value + '.npy')))
         self.data.append(NPY.from_file(os.path.join(folder, DataType.X_TEST_SCALED.value + '.npy')))
         self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_TRAIN.value + '.npy')))
         self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_TEST.value + '.npy')))
+        self.data.append(NPY.from_file(os.path.join(folder, DataType.X_VALIDATE_SCALED.value + '.npy')))
+        self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_VALIDATE_SCALED.value + '.npy')))

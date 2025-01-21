@@ -5,11 +5,11 @@ import os
 
 class MultipleCNNTrainingExperiment:
     @classmethod
-    def start(cls, N: int, test_size: float, model_file: str, data_folder: str):
+    def start(cls, N: int, test_size: float, model_file: str, data_file: str):
         seed: list[int] = random.randint(0, 100, N)
-
+        '''
         for n in range(N):
-            WindowSplittingExecution.execute(data_folder, 
+            WindowSplittingExecution.execute(data_file, 
                                              batch_split= False, 
                                              validation_split=True, 
                                              test_size=test_size, 
@@ -17,7 +17,9 @@ class MultipleCNNTrainingExperiment:
                                              batchsize=1800, 
                                              interpolation=False, 
                                              window_size=10)
-        
-        #data_file: list[str] = os.listdir('build/split')
+        '''
+        data_file: list[str] = os.listdir('build/split')
+        data_file.sort(key=int, reverse=True)
 
-        #CNNTrainingExecution.execute(model_file, data_folder)
+        for n in range(N):
+            CNNTrainingExecution.execute(model_file, os.path.join('build/split', data_file[n]))
