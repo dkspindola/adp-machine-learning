@@ -1,0 +1,2 @@
+from src.experiment.multiple_cnn_trainig_exp import MultipleCNNTrainingExperiment
+from src.experiment.multiple_cnn_validation_exp import MultipleCNNValidationExperiment
