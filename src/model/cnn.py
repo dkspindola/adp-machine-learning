@@ -6,6 +6,7 @@ from keras import Optimizer
 from src.data import NPY
 import os
 from src.data import DataType
+from src.process.callback import EarlyStopOnHighValLoss
 
 class CNN(MachineLearningModel):
     FOLDER = 'build/model/cnn'
@@ -42,18 +43,18 @@ class CNN(MachineLearningModel):
         y_test = np.squeeze(y_test)  
         # Modell mit den besten Hyperparametern aufbauen trainieren und testen
         self.model.fit(x_train_scaled, [y_train[:, 0], y_train[:, 1], y_train[:, 2]], 
-                       epochs=50, validation_data=(x_test_scaled,[y_test[:, 0], y_test[:, 1], y_test[:, 2]]),
+                       epochs=30, validation_data=(x_test_scaled,[y_test[:, 0], y_test[:, 1], y_test[:, 2]]),
                        callbacks=[keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)])
         
     def validate(self, data_folder: str):
         self.load_data(data_folder)
 
-        x_val_scaled = self.data[4].array
-        y_val_scaled = self.data[5].array
+        x_test_scaled = self.data[1].array
+        y_test = self.data[3].array
 
-        y_val_scaled = np.squeeze(y_val_scaled)
+        y_test = np.squeeze(y_test)
         
-        results = self.model.evaluate(x_val_scaled, [y_val_scaled[:, 0], y_val_scaled[:, 1], y_val_scaled[:, 2]], return_dict=True)
+        results = self.model.evaluate(x_test_scaled, [y_test[:, 0], y_test[:, 1], y_test[:, 2]], return_dict=True)
         return results
 
     def load_data(self, folder: str):

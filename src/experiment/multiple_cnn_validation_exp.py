@@ -4,18 +4,22 @@ import os
 import json
 from pandas import DataFrame
 import pandas as pd
+from src.util import timestamp
 
 class MultipleCNNValidationExperiment:
     @classmethod
-    def start(cls, model_folder: str, data_folder: str, make_validation: bool = False):
+    def start(cls, model_folder: str, data_folder: str, N: int, make_validation: bool = True):
         data_folders: list[str] = os.listdir(data_folder)
-        model_foders: list[str] = os.listdir(model_folder)
+        model_folders: list[str] = os.listdir(model_folder)
+
+        data_folders.sort(key=int, reverse=True)
+        model_folders.sort(key=int, reverse=True)
+
 
         if make_validation:
-            for data in data_folders:
-                for model in model_foders:
-                    try: CNNValidationExecution.execute(os.path.join(model_folder, model), os.path.join(data_folder, data))
-                    except: continue
+            for n in range(N):
+                CNNValidationExecution.execute(os.path.join(model_folder, model_folders[n]), os.path.join(data_folder, data_folders[n]))
+                
 
         df = DataFrame()
 
@@ -36,7 +40,9 @@ class MultipleCNNValidationExperiment:
 
             df = df._append(content, ignore_index=True)
 
+        print(df)
         numeric_columns = df.select_dtypes(include='number').columns
         averages = df[numeric_columns].mean()
-        print("Averages of numeric columns:")
+        os.makedirs(f'build/validate_average/{timestamp()}')
+        averages.to_json(f'build/validate_average/{timestamp()}/averages.json', index=False, indent=4)
         print(averages)

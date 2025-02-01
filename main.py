@@ -38,10 +38,13 @@ def main():
     mul_cnn_train.add_argument('--test_size', default=0.2, type=float)
     mul_cnn_train.add_argument('--model_file', type=str)
     mul_cnn_train.add_argument('--data_file', type=str)
+    mul_cnn_train.add_argument('--learning_rate', type=float)
+    mul_cnn_train.add_argument('--generate_new_split', action='store_true', default=False)
 
     mul_cnn_val = subparsers.add_parser('mul_cnn_val')
     mul_cnn_val.add_argument('--model_folder', type=str)    
     mul_cnn_val.add_argument('--data_folder', type=str) 
+    mul_cnn_val.add_argument('--N', type=int, default=10)
 
     args = parser.parse_args()
 
@@ -50,8 +53,8 @@ def main():
                       'window_split': lambda: WindowSplittingExecution.execute(args.data, args.batch_split, args.validation_split, args.test_size, args.seed, args.batchsize, args.interpolation, args.window_size),
                       'train': lambda: CNNTrainingExecution.execute(args.model_file, args.data_folder),
                       'validate': lambda: CNNValidationExecution.execute(args.model_file, args.data_folder),
-                      'mul_cnn_val': lambda: MultipleCNNValidationExperiment.start(args.model_folder, args.data_folder),
-                      'mul_cnn_exp': lambda: MultipleCNNTrainingExperiment.start(args.N, args.test_size, args.model_file, args.data_file)}
+                      'mul_cnn_val': lambda: MultipleCNNValidationExperiment.start(args.model_folder, args.data_folder, args.N),
+                      'mul_cnn_exp': lambda: MultipleCNNTrainingExperiment.start(args.N, args.test_size, args.model_file, args.data_file, args.learning_rate, args.generate_new_split)}
     
     function[args.command]()
 

@@ -44,8 +44,8 @@ class WindowSplitting(Splitting):
             self.splitted_data.append(NPY.from_array(array[6], DataType.Y_TRAIN))
             self.splitted_data.append(NPY.from_array(array[7], DataType.Y_VALIDATE))
             self.splitted_data.append(NPY.from_array(array[8], DataType.Y_TEST))
-            self.splitted_data.append(NPY.from_array(array[10], DataType.X_TEST_SCALED_INTERPOLATED))
-            self.splitted_data.append(NPY.from_array(array[11], DataType.Y_TEST_INTERPOLATED))
+            self.splitted_data.append(NPY.from_array(array[11], DataType.X_TEST_SCALED_INTERPOLATED))
+            self.splitted_data.append(NPY.from_array(array[12], DataType.Y_TEST_INTERPOLATED))
 
         elif self.validation_split and self.interpolation and not self.batch_split:
             self.splitted_data.append(NPY.from_array(array[0], DataType.X_TRAIN_SCALED))

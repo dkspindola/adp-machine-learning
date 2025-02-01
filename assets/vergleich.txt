@@ -1,15 +1,9 @@
 Averages of numeric columns:
-loss                                   3.884087
-phi_loss                               1.696775
-phi_mean_absolute_error                1.696948
-x_loss                                 0.093727
-x_mean_absolute_error                  0.093734
-y_loss                                 1.913007
-y_mean_absolute_error                  1.913050
-Verstellweg_Phi_loss                   1.724043
-Verstellweg_Phi_mean_absolute_error    1.724193
-Verstellweg_X_loss                     0.094300
-Verstellweg_X_mean_absolute_error      0.094306
-Verstellweg_Y_loss                     1.893421
-Verstellweg_Y_mean_absolute_error      1.893488
+loss                       2.139470
+phi_loss                   0.897553
+phi_mean_absolute_error    0.897610
+x_loss                     0.050490
+x_mean_absolute_error      0.050493
+y_loss                     1.000061
+y_mean_absolute_error      1.000086
 dtype: float64
