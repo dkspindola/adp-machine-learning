@@ -1,7 +1,7 @@
 from enum import Enum
 
 class DataType(Enum):
-    REAL_DATA = 'data'
+    REAL_DATA = 'real-data'
     SYNTHETIC_DATA = 'synthetic-data'
     X_TRAIN = 'x-train'
     X_VALIDATE = 'x-validate'

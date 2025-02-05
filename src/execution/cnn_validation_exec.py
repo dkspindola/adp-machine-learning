@@ -21,7 +21,7 @@ class CNNValidationExecution:
         content['data'] = data_folder   
         content['model'] = model_file   
         content['results'] = results    
-        folder = os.path.join('build', 'validate', timestamp())
+        folder = os.path.join('build', 'validate', os.path.split(os.path.split(model_folder)[0])[1], timestamp())
         os.makedirs(folder, exist_ok=True)
         json.dump(content, open(os.path.join(folder, 'validation_results.json'), 'w'), indent=4)
 

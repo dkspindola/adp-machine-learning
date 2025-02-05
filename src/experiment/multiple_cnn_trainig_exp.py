@@ -19,8 +19,13 @@ class MultipleCNNTrainingExperiment:
                                                  interpolation=False, 
                                                  window_size=10)
         
-        data_file: list[str] = os.listdir('build/split')
-        data_file.sort(key=int, reverse=True)
+        _, data_name = os.path.split(data_file)
+        data_name, _ = os.path.splitext(data_name)
+
+        folder = os.path.join('build', 'window_split', data_name)
+
+        data_files: list[str] = os.listdir(folder)
+        data_files.sort(key=int, reverse=True)
 
         for n in range(N):
-            CNNTrainingExecution.execute(model_file, os.path.join('build/split', data_file[n]), 'trained_model', learning_rate)
+            CNNTrainingExecution.execute(model_file, os.path.join(folder, data_files[n]), 'cnn.h5', learning_rate)

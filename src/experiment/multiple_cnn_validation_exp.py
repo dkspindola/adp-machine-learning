@@ -8,24 +8,23 @@ from src.util import timestamp
 
 class MultipleCNNValidationExperiment:
     @classmethod
-    def start(cls, model_folder: str, data_folder: str, N: int, make_validation: bool = True):
-        data_folders: list[str] = os.listdir(data_folder)
+    def start(cls, model_folder: str, N: int, make_validation: bool = True):
         model_folders: list[str] = os.listdir(model_folder)
-
-        data_folders.sort(key=int, reverse=True)
+        model_name = os.path.split(model_folder)[1]
         model_folders.sort(key=int, reverse=True)
-
 
         if make_validation:
             for n in range(N):
-                CNNValidationExecution.execute(os.path.join(model_folder, model_folders[n]), os.path.join(data_folder, data_folders[n]))
-                
+                folder = os.path.join(model_folder, model_folders[n])
+                metadata_file = os.path.join(folder, 'metadata.json')
+                metadata = json.load(open(metadata_file, 'r'))
+                CNNValidationExecution.execute(folder, metadata['data'])
 
         df = DataFrame()
 
-        validation_folders = os.listdir('build/validate')
+        validation_folders = os.listdir(f'build/validate/{model_name}')
         for id_folder in validation_folders:
-            file = os.path.join('build/validate', id_folder, 'validation_results.json')
+            file = os.path.join(f'build/validate/{model_name}', id_folder, 'validation_results.json')
             content = json.load(open(file))
             data = content['data']
             model = content['model']
@@ -40,9 +39,9 @@ class MultipleCNNValidationExperiment:
 
             df = df._append(content, ignore_index=True)
 
-        print(df)
         numeric_columns = df.select_dtypes(include='number').columns
         averages = df[numeric_columns].mean()
-        os.makedirs(f'build/validate_average/{timestamp()}')
-        averages.to_json(f'build/validate_average/{timestamp()}/averages.json', index=False, indent=4)
+        os.makedirs(f'build/validate_average/{model_name}/{timestamp()}')
+        averages.to_json(f'build/validate_average/{model_name}/{timestamp()}/averages.json', index=False, indent=4)
+        df.to_json(f'build/validate_average/{model_name}/{timestamp()}/dataframe.json', index=False, indent=4)
         print(averages)
