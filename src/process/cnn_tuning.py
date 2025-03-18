@@ -12,6 +12,8 @@ class CNNTuning(Process,Serializable):
     def __init__(self, tuner: Tuner):
         self.tuner = tuner
         self.data: list[NPY] = None # [x_train, x_validate, y_train, y_validate]
+        self.datafolder = None
+        self.epochs = None
         self.hyperparameters: list[HyperParameters] = []
         
     def start(self):
@@ -34,6 +36,7 @@ class CNNTuning(Process,Serializable):
         self.hyperparameters = self.tuner.get_best_hyperparameters(num_trials=1)
 
     def load(self, folder: str):
+        self.datafolder = folder
         self.data = []
         self.data.append(NPY.from_file(os.path.join(folder, DataType.X_TRAIN_SCALED.value + '.npy')))
         self.data.append(NPY.from_file(os.path.join(folder, DataType.X_VALIDATE_SCALED.value + '.npy')))
@@ -71,25 +74,14 @@ class CNNTuning(Process,Serializable):
         best_model = self.tuner.hypermodel.build(best)
         model_pfad = os.path.join(folder, 'best-model.h5')
         best_model.save(model_pfad)
-        
-        '''
-        history = self.train(best_model, data)
 
-        # Speichern des Modells
-        model_pfad = os.path.join(self.directory, 'best_model_CNN_60Trials_Interpolation.h5')
-        best_model.save(model_pfad)
-
-        # Plotte die losses in der Trainings- und Testkurve
-        
-        plt.figure(figsize=(12, 8))
-        plt.plot(history.history['val_Verstellweg_X_mae'], label='Validation Loss - Verstellweg_X')
-        plt.plot(history.history['val_Verstellweg_Y_mae'], label='Validation Loss - Verstellweg_Y')
-        plt.plot(history.history['val_Verstellweg_Phi_mae'], label='Validation Loss - Verstellweg_Phi')
-        plt.title('Validation Loss for Each Output')
-        plt.xlabel('Epochs')
-        plt.ylabel('Validation Loss')
-
-        plt.legend()
-        plt.show()
-        '''
-    
+    def save_metadata(self, folder: str):
+        metadata = {
+            "data": self.datafolder, 
+            "tuner": self.tuner.__class__.__name__,
+            "executions_per_trial": str(self.tuner.executions_per_trial),
+            "objective": str(self.tuner.oracle.objective),
+            "max_trials": str(self.tuner.oracle.max_trials),
+            "search": self.tuner.oracle.get_space().get_config()
+        }
+        json.dump(metadata, open(os.path.join(folder, 'metadata' + '.json'), 'w'), indent=4)

@@ -3,6 +3,7 @@ from enum import Enum
 class DataType(Enum):
     REAL_DATA = 'real-data'
     SYNTHETIC_DATA = 'synthetic-data'
+    SYNTHETIC_DATA_OFFSET = 'synthetic-data-offset'
     X_TRAIN = 'x-train'
     X_VALIDATE = 'x-validate'
     X_TEST = 'x-test'

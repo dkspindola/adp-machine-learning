@@ -9,7 +9,6 @@ from src.data import DataType
 from src.process.callback import EarlyStopOnHighValLoss
 
 class CNN(MachineLearningModel):
-    FOLDER = 'build/model/cnn'
 
     def __init__(self):        
         self.model = None

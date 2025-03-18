@@ -11,7 +11,7 @@ class Splitting(Process, Serializable):
         self.data: CSV = None
         self.splitted_data: list[CSV] = None
 
-    def load(self, file: str, sep: str=';', decimal:str=','):
+    def load(self, file: str, sep, decimal):
         self.data = CSV.from_file(file, sep, decimal)
     
     def save(self, folder: str):

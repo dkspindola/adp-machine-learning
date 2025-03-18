@@ -17,6 +17,19 @@ def main():
     split_parser.add_argument('--window_size', default=10, type=int)
     split_parser.add_argument('--interpolation', default=False, action='store_true')
 
+    # WINDOW_SPLIT
+    window_split_parser = subparsers.add_parser("window_split", help='Split data into windows')
+    window_split_parser.add_argument("--data", help="Path to load the data from")
+    window_split_parser.add_argument("--batchsize", default=1800, help="Number of datapoints per experiment", type=int)
+    window_split_parser.add_argument("--test_size", default=0.2, help="Path to load the data from", type=float)
+    window_split_parser.add_argument('--validation_split', action='store_true', help='Whether or not to split test data', default=True)
+    window_split_parser.add_argument('--batch_split', action='store_true', help='Respect the batches while splitting', default=False)
+    window_split_parser.add_argument('--seed', default=42, help='Seed for random number generation')
+    window_split_parser.add_argument('--window_size', default=10, type=int)
+    window_split_parser.add_argument('--interpolation', default=False, action='store')
+    window_split_parser.add_argument('--sep', default=';', type=str)
+    window_split_parser.add_argument('--decimal', default='.', type=str)
+
     #TUNE
     tune_parser = subparsers.add_parser('tune', help='Hyperparameter tuning')
     tune_parser.add_argument('--data_folder', help='Folder of the data', type=str)
@@ -30,6 +43,8 @@ def main():
     train_parser = subparsers.add_parser('train', help='Model training')
     train_parser.add_argument('--model_file', type=str)
     train_parser.add_argument('--data_folder', type=str)
+    train_parser.add_argument('--learning_rate', type=float)
+    train_parser.add_argument('--save_filename', type=str)
 
     #EXPERIMENT
     mul_cnn_train = subparsers.add_parser('mul_cnn_train')
@@ -48,8 +63,8 @@ def main():
 
     function: dict = {'split': lambda: DataSplittingExecution.execute(args.data, args.batch_split, args.validation_split, args.test_size, args.seed, args.batchsize),
                       'tune': lambda: CNNTuningExecution.execute(args.data_folder),
-                      'window_split': lambda: WindowSplittingExecution.execute(args.data, args.batch_split, args.validation_split, args.test_size, args.seed, args.batchsize, args.interpolation, args.window_size),
-                      'train': lambda: CNNTrainingExecution.execute(args.model_file, args.data_folder),
+                      'window_split': lambda: WindowSplittingExecution.execute(args.data, args.batch_split, args.validation_split, args.test_size, args.seed, args.batchsize, args.interpolation, args.window_size, args.sep, args.decimal),
+                      'train': lambda: CNNTrainingExecution.execute(args.model_file, args.data_folder, args.save_filename, args.learning_rate),
                       'validate': lambda: CNNValidationExecution.execute(args.model_file, args.data_folder),
                       'mul_cnn_val': lambda: MultipleCNNValidationExperiment.start(args.model_folder, args.N),
                       'mul_cnn_train': lambda: MultipleCNNTrainingExperiment.start(args.N, args.test_size, args.model_file, args.data_file, args.learning_rate, args.generate_new_split)}

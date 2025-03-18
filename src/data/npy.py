@@ -24,7 +24,7 @@ class NPY(DataContainer):
         return npy
 
     def load(self, file: str):
-        self.array = np.load(file)
+        self.array = np.load(file)   
     
     def save(self, folder: str):
         if not os.path.exists(folder): os.makedirs(folder)
