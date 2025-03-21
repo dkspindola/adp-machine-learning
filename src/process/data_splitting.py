@@ -22,17 +22,17 @@ class DataSplitting(Splitting):
 
     def set_splitted_data(self, df: Tuple[DataFrame, ...]) -> None:
         if self.validation_split:
-            self.splitted_data.append(CSV.from_df(df[0], DataType.X_TRAIN))   
-            self.splitted_data.append(CSV.from_df(df[1], DataType.X_VALIDATE))     
-            self.splitted_data.append(CSV.from_df(df[2], DataType.X_TEST))     
-            self.splitted_data.append(CSV.from_df(df[3], DataType.Y_TRAIN))
-            self.splitted_data.append(CSV.from_df(df[4], DataType.Y_VALIDATE))     
-            self.splitted_data.append(CSV.from_df(df[5], DataType.Y_TEST))     
+            self.splitted_data.append(CSV.from_df(df[0], DataType.X_TRAIN.value))   
+            self.splitted_data.append(CSV.from_df(df[1], DataType.X_VALIDATE.value))     
+            self.splitted_data.append(CSV.from_df(df[2], DataType.X_TEST.value))     
+            self.splitted_data.append(CSV.from_df(df[3], DataType.Y_TRAIN.value))
+            self.splitted_data.append(CSV.from_df(df[4], DataType.Y_VALIDATE.value))     
+            self.splitted_data.append(CSV.from_df(df[5], DataType.Y_TEST.value))     
         else:                   
-            self.splitted_data.append(CSV.from_df(df[0], DataType.X_TRAIN))
-            self.splitted_data.append(CSV.from_df(df[0], DataType.X_TEST))   
-            self.splitted_data.append(CSV.from_df(df[0], DataType.Y_TRAIN))   
-            self.splitted_data.append(CSV.from_df(df[0], DataType.Y_TEST))   
+            self.splitted_data.append(CSV.from_df(df[0], DataType.X_TRAIN.value))
+            self.splitted_data.append(CSV.from_df(df[0], DataType.X_TEST.value))   
+            self.splitted_data.append(CSV.from_df(df[0], DataType.Y_TRAIN.value))   
+            self.splitted_data.append(CSV.from_df(df[0], DataType.Y_TEST.value))   
 
     def print_summary(self):
         timestamp: list[str] = []

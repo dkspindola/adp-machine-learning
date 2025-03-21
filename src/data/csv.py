@@ -8,7 +8,7 @@ class CSV(DataContainer):
         self.sep: str = sep
         self.decimal: str = decimal
         self.df: DataFrame = None
-        self.type: DataType = None
+        self.name: str = None
 
     @classmethod
     def from_file(cls, file: str, sep: str, decimal: str):
@@ -18,10 +18,10 @@ class CSV(DataContainer):
         return csv
     
     @classmethod
-    def from_df(cls, df: DataFrame, data_type: DataType, sep: str=',', decimal: str='.'):
+    def from_df(cls, df: DataFrame, name: str, sep: str=',', decimal: str='.'):
         csv = cls(sep, decimal)
         csv.df = df
-        csv.type = data_type
+        csv.name = name
         return csv
 
     def load(self, file: str):
@@ -29,9 +29,9 @@ class CSV(DataContainer):
     
     def save(self, folder: str):
         if not os.path.exists(folder): os.makedirs(folder)
-        self.df.to_csv(os.path.join(folder, self.type.value + '.csv'))
+        self.df.to_csv(os.path.join(folder, self.name + '.csv'))
 
     def set_type(self, file: str) -> None:
         _, tail = os.path.split(file)
         filename, _ = os.path.splitext(tail)
-        self.type =  DataType(filename)
+        self.name =  filename
