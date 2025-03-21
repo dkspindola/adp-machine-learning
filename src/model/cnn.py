@@ -64,3 +64,14 @@ class CNN(MachineLearningModel):
         self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_TEST.value + '.npy')))
         self.data.append(NPY.from_file(os.path.join(folder, DataType.X_VALIDATE_SCALED.value + '.npy')))
         self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_VALIDATE_SCALED.value + '.npy')))
+
+    def soft_start(self, data_file: str, optimizer: Optimizer, loss: list[str], metrics: dict[str, str], epochs: int = 10):
+        # Freeze all layers except the last one
+        for layer in self.model.layers[:-1]:
+            layer.trainable = False
+
+        self.fit(data_file, optimizer, loss, metrics)
+
+        # Unfreeze all layers after soft start
+        for layer in self.model.layers:
+            layer.trainable = True
