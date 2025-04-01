@@ -9,7 +9,7 @@ def build_model(hp, window_size=10, n_features=11):
     input_layer = layers.Input(shape=(window_size,n_features))
     
     # Hyperparameter für die Anzahl an Conv Layer
-    num_layers_conv = hp.Int('num_layers_conv', 0, 6)
+    num_layers_conv = hp.Int('num_layers_conv', 1, 6)
     print(f'Anzahl an Conv Layers: {num_layers_conv}')
     
     # Hyperparameter für die Lernrate
