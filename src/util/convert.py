@@ -9,9 +9,17 @@ def convert_to_csv(json_file: dict[str]):
     df.transpose
     df.to_csv(os.path.splitext(json_file)[0] + '.csv')
 
-convert_to_csv('build/validate_average/cnn-corvin-30-trials/1738768485/averages.json')
-convert_to_csv('build/validate_average/cnn-corvin-60-trials/1738768542/averages.json')
-convert_to_csv('build/validate_average/cnn-davi/1738768834/averages.json')
-convert_to_csv('build/validate_average/cnn-davi-new/1738768586/averages.json')
 
-
+def read_validation_results(folder: str):
+    df = DataFrame()
+    for root, dirs, files in os.walk(folder):
+        for file in files:
+            if file == "validation_results.json":
+                with open(os.path.join(root, file), 'r') as f:
+                    data = json.load(f)
+                    folder_name = os.path.basename(root)  # Get the folder name
+                    temp_df = DataFrame.from_dict([data["results"]])
+                    model_file: str = data["model"]
+                    temp_df.index = [model_file.split("/")[-2]]  # Set folder name as index
+                    df = pd.concat([df, temp_df], ignore_index=False)
+    return df
