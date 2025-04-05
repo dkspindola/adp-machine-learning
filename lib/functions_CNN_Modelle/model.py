@@ -44,7 +44,7 @@ def build_model(hp, window_size=10, n_features=11):
     # Fully Connected Part (MLP) / Dense Schichten
     
     # Definition der Anzahl an Dense Layers
-    num_layers_fully = hp.Int('num_layers_fully', 1,15, 1)
+    num_layers_fully = hp.Int('num_layers_fully', 1,6, 1)
     print(f'Anzahl an Fully Connected Layers: {num_layers_fully}')
 
     # Übergabe der Flatten Schicht

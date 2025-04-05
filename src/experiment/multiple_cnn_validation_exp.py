@@ -8,7 +8,7 @@ from src.util import timestamp
 
 class MultipleCNNValidationExperiment:
     @classmethod
-    def start(cls, model_folder: str, N: int, make_validation: bool = True):
+    def start(cls, model_folder: str, N: int, make_validation: bool = True, data_folder: str = None):
         model_folders: list[str] = os.listdir(model_folder)
         model_name = os.path.split(model_folder)[1]
         model_folders.sort(key=int, reverse=True)
@@ -16,9 +16,13 @@ class MultipleCNNValidationExperiment:
         if make_validation:
             for n in range(N):
                 folder = os.path.join(model_folder, model_folders[n])
-                metadata_file = os.path.join(folder, 'metadata.json')
-                metadata = json.load(open(metadata_file, 'r'))
-                CNNValidationExecution.execute(folder, metadata['data'])
+                if data_folder is None:
+                    metadata_file = os.path.join(folder, 'metadata.json')
+                    metadata = json.load(open(metadata_file, 'r'))
+                    CNNValidationExecution.execute(folder, metadata['data'])
+                else:
+                    CNNValidationExecution.execute(folder, data_folder)
+
 
         df = DataFrame()
 

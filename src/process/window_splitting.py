@@ -19,7 +19,7 @@ class WindowSplitting(Splitting):
         validation_split_number: int = 1 if self.validation_split else 0
         interpolation_number = 1 if self.interpolation else 0
 
-        array: Tuple[ndarray, ...] = Fensterung_Scale(self.data.df, window_size=window_size, Datengröße=batchsize, size=test_size, Train_Test_Split=batch_split_number, Validation_data=validation_split_number, random=seed, Interpolation=interpolation_number)
+        array: Tuple[ndarray, ...] = Fensterung_Scale(self.data.df, window_size=window_size, Datengröße=batchsize, size=test_size, Train_Test_Split=batch_split_number, Validation_data=validation_split_number, random=int(seed), Interpolation=interpolation_number)
         self.set_splitted_data(array)
 
     def set_splitted_data(self, array: Tuple[ndarray, ...]):

@@ -5,19 +5,21 @@ import os
 
 class MultipleCNNTrainingExperiment:
     @classmethod
-    def start(cls, N: int, test_size: float, model_file: str, data_file: str, learning_rate: float, generate_new_split: bool):
+    def start(cls, N: int, test_size: float, model_file: str, data_file: str, learning_rate: float, generate_new_split: bool, sep: str, decimal: str, batchsize: int, batch_split: bool):
         if generate_new_split:
-            seed: list[int] = random.randint(0, 100, N)
+            seed: list[int] = random.randint(0, 32000, N)
             
             for n in range(N):
                 WindowSplittingExecution.execute(data_file, 
-                                                 batch_split= False, 
+                                                 batch_split=batch_split, 
                                                  validation_split=True, 
                                                  test_size=test_size, 
                                                  seed=seed[n], 
-                                                 batchsize=1800, 
+                                                 batchsize=batchsize, 
                                                  interpolation=False, 
-                                                 window_size=10)
+                                                 window_size=10,
+                                                 sep=sep, 
+                                                 decimal=decimal)
         
         _, data_name = os.path.split(data_file)
         data_name, _ = os.path.splitext(data_name)

@@ -26,6 +26,7 @@ class CNN(MachineLearningModel):
 
     def load(self, file: str):
         self.model = keras.models.load_model(file)
+        print(self.model.summary())
 
     def save(self, file: str):
         os.makedirs(os.path.dirname(file), exist_ok=True)
