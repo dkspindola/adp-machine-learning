@@ -6,7 +6,7 @@ import keras
 
 class CNNSoftStartExecution:
     @classmethod
-    def execute(cls, model_file: str, data_file: str, save_filename: str, learning_rate: float, n_unfreezed_layers: int):
+    def execute(cls, model_file: str, data_file: str, learning_rate: float, n_unfreezed_layers: int):
         cnn = CNN.from_file(model_file)
         optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
         loss = ['mean_absolute_error', 'mean_absolute_error', 'mean_absolute_error']
@@ -25,12 +25,11 @@ class CNNSoftStartExecution:
                 "learning_rate": learning_rate
             },
             "loss": loss,
-            "metrics": metrics
+            "metrics": metrics,
+            "n_unfreezed_layers": n_unfreezed_layers
         }
 
         folder = os.path.join('build', 'soft-start', model_name, timestamp())
 
-        cnn.save(os.path.join(folder, save_filename))
+        cnn.save(os.path.join(folder, "cnn.h5"))
         json.dump(metadata, open(os.path.join(folder, 'metadata' + '.json'), 'w'), indent=4)
-        
-        print(os.path.join(folder, save_filename))

@@ -68,6 +68,10 @@ class CNN(MachineLearningModel):
 
     def soft_start(self, data_file: str, optimizer: Optimizer, loss: list[str], metrics: dict[str, str], n_unfreezed_layers: int):
         # Freeze all layers except the last one
+        N = len(self.model.layers)
+        print("Number of Layers: ", N)
+        if n_unfreezed_layers > N:
+            raise ValueError("Number of unfreezed layers cannot be greater than total number of layers")
         for layer in self.model.layers[:-n_unfreezed_layers]:
             layer.trainable = False
 
