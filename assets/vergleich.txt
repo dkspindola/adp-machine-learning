@@ -1,9 +1,0 @@
-Averages of numeric columns:
-loss                       2.139470
-phi_loss                   0.897553
-phi_mean_absolute_error    0.897610
-x_loss                     0.050490
-x_mean_absolute_error      0.050493
-y_loss                     1.000061
-y_mean_absolute_error      1.000086
-dtype: float64

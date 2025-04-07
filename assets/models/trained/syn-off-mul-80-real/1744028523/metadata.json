@@ -1,0 +1,24 @@
+{
+    "model": "build/tune/sim_data_preprocessed_offset_multiplitiv/1743667824/best-model.h5",
+    "data": "build/window_split/real-data/1744027288",
+    "optimizer": {
+        "name": "adam",
+        "learning_rate": 0.0005110140569138342
+    },
+    "loss": [
+        "mean_absolute_error",
+        "mean_absolute_error",
+        "mean_absolute_error"
+    ],
+    "metrics": {
+        "Verstellweg_X": [
+            "mae"
+        ],
+        "Verstellweg_Y": [
+            "mae"
+        ],
+        "Verstellweg_Phi": [
+            "mae"
+        ]
+    }
+}

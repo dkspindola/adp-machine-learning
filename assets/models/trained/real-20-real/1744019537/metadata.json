@@ -1,0 +1,24 @@
+{
+    "model": "build/tune/real-data/1743693239/best_model.h5",
+    "data": "build/window_split/real-data/1744018387",
+    "optimizer": {
+        "name": "adam",
+        "learning_rate": 0.0009248893590788498
+    },
+    "loss": [
+        "mean_absolute_error",
+        "mean_absolute_error",
+        "mean_absolute_error"
+    ],
+    "metrics": {
+        "Verstellweg_X": [
+            "mae"
+        ],
+        "Verstellweg_Y": [
+            "mae"
+        ],
+        "Verstellweg_Phi": [
+            "mae"
+        ]
+    }
+}
