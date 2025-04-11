@@ -5,7 +5,7 @@ import os
 
 class MultipleCNNTrainingExperiment:
     @classmethod
-    def start(cls, N: int, test_size: float, model_file: str, data_file: str, learning_rate: float, generate_new_split: bool, sep: str, decimal: str, batchsize: int, batch_split: bool):
+    def start(cls, N: int, test_size: float, model_file: str, data_file: str, learning_rate: float, generate_new_split: bool, sep: str, decimal: str, batchsize: int, batch_split: bool, interpolation: bool):
         if generate_new_split:
             seed: list[int] = random.randint(0, 32000, N)
             
@@ -16,7 +16,7 @@ class MultipleCNNTrainingExperiment:
                                                  test_size=test_size, 
                                                  seed=seed[n], 
                                                  batchsize=batchsize, 
-                                                 interpolation=False, 
+                                                 interpolation=interpolation, 
                                                  window_size=10,
                                                  sep=sep, 
                                                  decimal=decimal)
