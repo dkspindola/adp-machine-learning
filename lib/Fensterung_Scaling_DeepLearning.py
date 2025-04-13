@@ -33,6 +33,14 @@ import random as rnd
 
 def Fensterung_Scale(data, interpoliertesdf=None, window_size = 10, Datengröße = 1800, size=0.2, random =1, Scaler = StandardScaler, Train_Test_Split =2, Validation_data=1, Interpolation=0):
     
+    # Ensure size is within valid bounds
+    if size <= 0:
+        size = 0.01  # Set to a small positive value to avoid errors
+        print("Warning: 'size' was set to 0. Adjusted to 0.01 to avoid errors.")
+    elif size >= 1:
+        size = 0.99  # Set to a value less than 1 to avoid errors
+        print("Warning: 'size' was set to 1. Adjusted to 0.99 to avoid errors.")
+
     # Labels die gedroppt werden später
     Columns_drop = ['X_opt-X-Ist','Y_Opt-Y_ist','phi_Opt-phi_ist']
 

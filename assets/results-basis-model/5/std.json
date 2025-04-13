@@ -1,0 +1,9 @@
+{
+    "Verstellweg_Phi_loss":0.5144801652,
+    "Verstellweg_Phi_mean_absolute_error":0.5144782604,
+    "Verstellweg_X_loss":0.104800365,
+    "Verstellweg_X_mean_absolute_error":0.1048025771,
+    "Verstellweg_Y_loss":0.5819181373,
+    "Verstellweg_Y_mean_absolute_error":0.5819282505,
+    "loss":0.8202549605
+}

@@ -44,8 +44,10 @@ class MultipleCNNValidationExperiment:
             df = df._append(content, ignore_index=True)
 
         numeric_columns = df.select_dtypes(include='number').columns
+        std = df[numeric_columns].std()
         averages = df[numeric_columns].mean()
         os.makedirs(f'build/validate_average/{model_name}/{timestamp()}')
         averages.to_json(f'build/validate_average/{model_name}/{timestamp()}/averages.json', index=False, indent=4)
+        std.to_json(f'build/validate_average/{model_name}/{timestamp()}/std.json', index=False, indent=4)
         df.to_json(f'build/validate_average/{model_name}/{timestamp()}/dataframe.json', index=False, indent=4)
         print(averages)
