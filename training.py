@@ -12,7 +12,7 @@ data_folders = sorted([f.path for f in os.scandir("build/tune/tune_test") if f.i
 model_folders = sorted([f.path for f in os.scandir("build/tune/tune_test") if f.is_dir()])
 
 
-for test_size in [0.8]:
+for test_size in [0.2]:
     best_hp = json.load(open(f"{os.path.dirname(MODEL_FILE)}/best-hyperparameters.json", "r"))
 
     MultipleCNNTrainingExperiment.start(N=5, 
