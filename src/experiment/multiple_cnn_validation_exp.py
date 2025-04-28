@@ -9,6 +9,20 @@ from src.util import timestamp
 class MultipleCNNValidationExperiment:
     @classmethod
     def start(cls, model_folder: str, N: int, make_validation: bool = True, data_folder: str = None):
+        """Runs a multiple CNN validation experiment.
+
+        This method validates multiple CNN models stored in the specified folder,
+        aggregates the results, and computes statistical summaries.
+
+        Args:
+            model_folder (str): Path to the folder containing CNN models.
+            N (int): Number of models to validate.
+            make_validation (bool, optional): Whether to perform validation. Defaults to True.
+            data_folder (str, optional): Path to the data folder. If None, metadata is used. Defaults to None.
+
+        Raises:
+            FileNotFoundError: If required files or directories are missing.
+        """
         model_folders: list[str] = os.listdir(model_folder)
         model_name = os.path.split(model_folder)[1]
         model_folders.sort(key=int, reverse=True)

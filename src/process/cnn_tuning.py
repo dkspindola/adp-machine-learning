@@ -9,6 +9,16 @@ import numpy as np
 from kerastuner import Tuner, HyperParameters
 
 class CNNTuning(Process,Serializable):
+    """
+    Class for tuning a CNN model using Keras Tuner.
+    
+    Attributes:
+        tuner (Tuner): The Keras Tuner instance used for hyperparameter tuning.
+        data (list[NPY]): List containing training and validation data.
+        datafolder (str): Path to the folder containing the data.
+        epochs (int): Number of epochs for training.
+        hyperparameters (list[HyperParameters]): List of best hyperparameters found during tuning.
+    """
     def __init__(self, tuner: Tuner):
         self.tuner = tuner
         self.data: list[NPY] = None # [x_train, x_validate, y_train, y_validate]
@@ -17,6 +27,9 @@ class CNNTuning(Process,Serializable):
         self.hyperparameters: list[HyperParameters] = []
         
     def start(self):
+        """
+        Start the tuning process by loading data and performing hyperparameter search.
+        """
         x_train, x_validate = self.data[0].array, self.data[1].array
         y_train, y_validate = self.data[2].array, self.data[3].array
 
@@ -36,6 +49,12 @@ class CNNTuning(Process,Serializable):
         self.hyperparameters = self.tuner.get_best_hyperparameters(num_trials=1)
 
     def load(self, folder: str):
+        """
+        Load the data from the specified folder.
+        
+        Args:
+            folder (str): Path to the folder containing the data files.
+        """
         self.datafolder = folder
         self.data = []
         self.data.append(NPY.from_file(os.path.join(folder, DataType.X_TRAIN_SCALED.value + '.npy')))
@@ -44,6 +63,12 @@ class CNNTuning(Process,Serializable):
         self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_VALIDATE.value + '.npy')))
 
     def save(self, folder: str):
+        """
+        Save the best hyperparameters and model to the specified folder.
+
+        Args:
+            folder (str): Path to the folder where the hyperparameters and model will be saved.
+        """
         # Speichere Hyperparameter in einer JSON Datei
         best = self.hyperparameters[0]
         best_hyperparameters = best.values
@@ -76,6 +101,12 @@ class CNNTuning(Process,Serializable):
         best_model.save(model_pfad)
 
     def save_metadata(self, folder: str):
+        """
+        Save metadata about the tuning process to a JSON file.
+
+        Args:
+            folder (str): Path to the folder where the metadata will be saved.
+        """
         metadata = {
             "data": self.datafolder, 
             "tuner": self.tuner.__class__.__name__,

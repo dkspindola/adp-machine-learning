@@ -4,8 +4,27 @@ import os
 from src.util import timestamp
 
 class CNNValidationExecution:
+    """Handles the validation execution of a CNN model.
+
+    This class provides a method to validate a CNN model using a specified
+    dataset and saves the validation results to a JSON file.
+    """
+
     @classmethod
     def execute(cls, model_folder: str, data_folder: str):
+        """Executes the validation of a CNN model.
+
+        This method locates the CNN model file in the specified folder,
+        validates it using the provided dataset, and saves the results
+        to a JSON file in a structured output folder.
+
+        Args:
+            model_folder (str): The folder containing the CNN model file (.h5).
+            data_folder (str): The folder containing the dataset for validation.
+
+        Raises:
+            FileNotFoundError: If no .h5 file is found in the model folder.
+        """
         model_file = None
         for file in os.listdir(model_folder):
             if file.endswith('.h5'):

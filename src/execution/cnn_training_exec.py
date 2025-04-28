@@ -7,6 +7,18 @@ import keras
 class CNNTrainingExecution:
     @classmethod
     def execute(cls, model_file: str, data_file: str, save_filename: str, learning_rate: float):
+        """Executes the training process for a CNN model.
+
+        Args:
+            model_file (str): Path to the file containing the CNN model definition.
+            data_file (str): Path to the file containing the training data.
+            save_filename (str): Filename to save the trained model.
+            learning_rate (float): Learning rate for the optimizer.
+
+        Raises:
+            FileNotFoundError: If the model or data file does not exist.
+            ValueError: If the training process encounters invalid parameters.
+        """
         cnn = CNN.from_file(model_file)
         optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
         loss = ['mean_absolute_error', 'mean_absolute_error', 'mean_absolute_error']
