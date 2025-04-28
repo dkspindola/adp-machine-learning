@@ -4,14 +4,6 @@ import os
 import pandas as pd
 
 def convert_to_csv(json_file: dict[str]):
-    """Converts a JSON file to a CSV file.
-
-    Args:
-        json_file (dict[str]): Path to the JSON file.
-
-    Returns:
-        None. The function saves the CSV file in the same directory as the JSON file.
-    """
     d = json.load(open(json_file, "r"))
     df = DataFrame.from_dict(d, orient='index')
     df.transpose
@@ -19,14 +11,6 @@ def convert_to_csv(json_file: dict[str]):
 
 
 def read_validation_results(folder: str):
-    """Reads validation results from JSON files in a folder and combines them into a DataFrame.
-
-    Args:
-        folder (str): Path to the folder containing validation result JSON files.
-
-    Returns:
-        DataFrame: A DataFrame containing combined validation results.
-    """
     df = DataFrame()
     for root, dirs, files in os.walk(folder):
         for file in files:
