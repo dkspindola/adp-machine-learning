@@ -1,5 +1,6 @@
 from src.model.machine_learning_model import MachineLearningModel
-from lib.functions_CNN_Modelle.model import build_model
+from lib.functions_CNN_Modelle.model import build_model,build_model_output_vektor
+
 import numpy as np
 import keras
 from keras import Optimizer
@@ -7,6 +8,9 @@ from src.data import NPY
 import os
 from src.data import DataType
 from src.process.callback import EarlyStopOnHighValLoss
+import tensorflow as tf
+from tensorflow.keras.utils import register_keras_serializable
+from tensorflow.keras.layers import Concatenate, Dense, Lambda, Layer, concatenate
 
 class CNN(MachineLearningModel):
     """Convolutional Neural Network (CNN) model class."""
@@ -41,6 +45,10 @@ class CNN(MachineLearningModel):
             keras.Model: A compiled Keras model.
         """
         return build_model(hp)
+    
+    @classmethod
+    def hypermodel_singleOutput(cls, hp):
+        return build_model_output_vektor(hp)
 
     def load(self, file: str):
         """Loads a Keras model from a file.

@@ -55,6 +55,30 @@ class WindowSplitting(Splitting):
             Interpolation=interpolation_number,
         )
         self.set_splitted_data(array)
+        self.add_scaler(array)
+
+    def add_scaler(self, array: Tuple[ndarray, ...]):
+        if self.validation_split and not self.interpolation:
+            self.scalers_features =array[9]
+            self.scalers_labels = array[10]    
+        elif self.validation_split and self.interpolation and self.batch_split:
+            self.scalers_features =array[9]
+            self.scalers_labels = array[10]    
+        elif self.validation_split and self.interpolation and not self.batch_split:
+            self.scalers_features =array[6]
+            self.scalers_labels = array[7]        
+        elif not self.validation_split and self.interpolation:
+            self.scalers_features =array[6]
+            self.scalers_labels = array[7]    
+        else:
+            self.scalers_features =array[6]
+            self.scalers_labels = array[7]    
+            
+            
+    def get_scalers(self):
+        return self.scalers_features, self.scalers_labels
+    
+
 
     def set_splitted_data(self, array: Tuple[ndarray, ...]):
         """Sets the splitted data based on the provided array.

@@ -28,3 +28,18 @@ class CNNTuningExecution:
         process.save_metadata(path)
         process.start()
         process.save(path)
+
+    
+    @classmethod
+    def execute_tuning_singleOutput(self, data_folder: str, objective: str='val_loss', max_trials: int=30, train_on_scled_labels=True): #TODO Redundant zu oben, ggf. 
+        path = os.path.join('build', 'tune', os.path.basename(os.path.dirname(data_folder)), timestamp())
+        tuner = BayesianOptimization(CNN.hypermodel_singleOutput, objective, max_trials, executions_per_trial=1, directory=path, project_name='search')
+        process = CNNTuning(tuner)
+        if train_on_scled_labels:
+            process.load_scaled_labels(data_folder)
+        else:
+            process.load(data_folder)
+        process.save_metadata(path)
+        print("start_singleOutput_tuning()")
+        process.start_singleOutput_tuning()
+        process.save(path)

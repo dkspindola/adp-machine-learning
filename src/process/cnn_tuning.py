@@ -48,6 +48,27 @@ class CNNTuning(Process,Serializable):
         # Optimale Hyperparameter zurückgeben lassen
         self.hyperparameters = self.tuner.get_best_hyperparameters(num_trials=1)
 
+
+    def start_singleOutput_tuning(self):
+        x_train, x_validate = self.data[0].array, self.data[1].array
+        y_train, y_validate = self.data[2].array, self.data[3].array
+
+        y_train = np.squeeze(y_train)
+        y_validate =np.squeeze(y_validate)
+        print(y_validate.shape)
+        #y_train, y_validate = np.squeeze(y_train), np.squeeze(y_validate)
+
+        self.tuner.search(x_train, y_train,
+                          epochs=30, 
+                          validation_data=(x_validate, y_validate), 
+                          callbacks=[EarlyStopping(monitor='val_loss', patience=3), 
+                                     EarlyStopOnHighValLoss(threshold=2.5, patience=3)],
+                          verbose=1)
+
+        # Optimale Hyperparameter zurückgeben lassen
+        self.hyperparameters = self.tuner.get_best_hyperparameters(num_trials=1)
+    
+
     def load(self, folder: str):
         """
         Load the data from the specified folder.
@@ -61,6 +82,24 @@ class CNNTuning(Process,Serializable):
         self.data.append(NPY.from_file(os.path.join(folder, DataType.X_VALIDATE_SCALED.value + '.npy')))
         self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_TRAIN.value + '.npy')))
         self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_VALIDATE.value + '.npy')))
+
+
+    def load_scaled_labels(self, folder: str):
+        self.datafolder = folder
+        self.data = []
+        self.data.append(NPY.from_file(os.path.join(folder, DataType.X_TRAIN_SCALED.value + '.npy')))
+        self.data.append(NPY.from_file(os.path.join(folder, DataType.X_VALIDATE_SCALED.value + '.npy')))
+        self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_TRAIN_SCALED.value + '.npy')))
+        self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_VALIDATE_SCALED.value + '.npy')))
+
+        #Weil kein Bock die gnaze Pipeline zu überarbeiten, hier noch ein Jason um Sonderfallt Training auf gescalten labeln zu dokumentieren
+        metadata = {
+            "Lable Type": "Label sind Scaliert"
+        }
+        json.dump(metadata, open(os.path.join(folder, 'metadata_lableType' + '.json'), 'w'), indent=4)
+
+
+
 
     def save(self, folder: str):
         """
