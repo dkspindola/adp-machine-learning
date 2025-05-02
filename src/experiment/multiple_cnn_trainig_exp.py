@@ -66,3 +66,41 @@ class MultipleCNNTrainingExperiment:
                 'cnn.h5', 
                 learning_rate
             )
+
+    
+    @classmethod
+    def start_save_scalers(cls, N: int, test_size: float, model_file: str, data_file: str, learning_rate: float, generate_new_split: bool, sep: str, decimal: str, batchsize: int, batch_split: bool):
+        #TODO Redundanten Code entfernen
+        if generate_new_split:
+            seed: list[int] = random.randint(0, 32000, N)
+            
+            for n in range(N):
+                WindowSplittingExecution.execute_with_scaler(data_file, 
+                                                 batch_split=batch_split, 
+                                                 validation_split=True, 
+                                                 test_size=test_size, 
+                                                 seed=seed[n], 
+                                                 batchsize=batchsize, 
+                                                 interpolation=False, 
+                                                 window_size=10,
+                                                 sep=sep, 
+                                                 decimal=decimal)
+        
+        _, data_name = os.path.split(data_file)
+        data_name, _ = os.path.splitext(data_name)
+
+        # Define the folder path for the split data.
+        folder = os.path.join('build', 'window_split', data_name)
+
+        # List and sort the data files in descending order.
+        data_files: list[str] = os.listdir(folder)
+        data_files.sort(key=int, reverse=True)
+
+        for n in range(N):
+            # Execute CNN training for each split data file.
+            CNNTrainingExecution.execute(
+                model_file, 
+                os.path.join(folder, data_files[n]), 
+                'cnn.h5', 
+                learning_rate
+            )
