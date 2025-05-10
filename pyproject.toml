@@ -1,0 +1,18 @@
+[project]
+name = "adp-machine-learning"
+version = "1.0.0"
+requires-python = ">=3.12.9"
+
+dependencies = [
+    "ipykernel==6.29.5",
+    "pandas==2.2.3",
+    "keras==3.9.2",
+    "keras-tuner==1.4.7",
+    "tensorflow==2.19.0",
+    "scikit-learn==1.6.1",
+    "matplotlib==3.10.1",
+    "pandasgui==0.2.14",
+    "tqdm==4.67.1",
+    "seaborn==0.13.2",
+    "adapt==0.4.4" 
+]
