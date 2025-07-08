@@ -50,6 +50,8 @@ class CNN(MachineLearningModel):
     def hypermodel_singleOutput(cls, hp):
         return build_model_output_vektor(hp)
 
+    
+
     def load(self, file: str):
         """Loads a Keras model from a file.
 

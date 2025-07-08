@@ -1,11 +1,12 @@
 from src.process.process import Process
 from src.serialize import Serializable
-from src.data import NPY, DataType
+from src.data import NPY, DataType, OutputTarget
 from src.process.callback import EarlyStopOnHighValLoss, EarlyStopping
 
 import os
 import json
 import numpy as np
+import keras 
 from kerastuner import Tuner, HyperParameters
 
 class CNNTuning(Process,Serializable):
@@ -48,7 +49,6 @@ class CNNTuning(Process,Serializable):
         # Optimale Hyperparameter zurückgeben lassen
         self.hyperparameters = self.tuner.get_best_hyperparameters(num_trials=1)
 
-
     def start_singleOutput_tuning(self):
         x_train, x_validate = self.data[0].array, self.data[1].array
         y_train, y_validate = self.data[2].array, self.data[3].array
@@ -68,6 +68,33 @@ class CNNTuning(Process,Serializable):
         # Optimale Hyperparameter zurückgeben lassen
         self.hyperparameters = self.tuner.get_best_hyperparameters(num_trials=1)
     
+    def start_three_models_tuning(self, output_name : OutputTarget):
+        x_train, x_validate = self.data[0].array, self.data[1].array
+        y_train, y_validate = self.data[2].array, self.data[3].array
+
+        y_train = np.squeeze(y_train)
+        y_validate =np.squeeze(y_validate)
+        self.tuned_models: dict[OutputTarget, keras.Model] = {}
+        #Daten auswählen für das einzelne Modell
+        index=output_name.get_index()
+        y_train_single = y_train[:, index]
+        y_val_single = y_validate[:, index]
+
+        #Trennen der Modelle
+        self.tuner.search(x_train,
+                          y_train_single,#{output_name.get_output_name(): y_train_single},#
+                            epochs=3, # TODO: ZUM DEBUGGEN VON 30 AUF 3 REDUZIERT ==================================================================== 
+                             validation_data=(x_validate, y_val_single),#validation_data=(x_validate, {output_name.value : y_val_single}), 
+                            callbacks=[EarlyStopping(
+                                monitor=output_name.get_objective(),
+                                patience=3,mode='min'), 
+                                    EarlyStopOnHighValLoss(threshold=2.5, patience=3)],
+                        verbose=1)
+
+        # Optimale Hyperparameter zurückgeben lassen
+        best_hp = self.tuner.get_best_hyperparameters(num_trials=1)
+        # Hyperparameter ablegen mit Modellzuordnung
+        self.tuned_models[output_name] = best_hp
 
     def load(self, folder: str):
         """
@@ -99,6 +126,39 @@ class CNNTuning(Process,Serializable):
         json.dump(metadata, open(os.path.join(folder, 'metadata_lableType' + '.json'), 'w'), indent=4)
 
 
+    def save_single_model(self, folder: str):
+        """
+        Save best hyperparameters and models for each OutputTarget to the specified folder.
+
+        Args:
+            folder (str): Path to the folder where everything will be saved.
+        """
+        os.makedirs(folder, exist_ok=True)
+
+        if not self.tuned_models:
+            print("Warnung: Keine getunten Modelle zum Speichern vorhanden.")
+            return
+
+        for output_target, best_hp in self.tuned_models.items():
+            # 1. Speicherpfade definieren
+            model_name = output_target.get_output_name()
+            model_folder = os.path.join(folder, model_name)
+            os.makedirs(model_folder, exist_ok=True)
+
+            # 2. Hyperparameter als JSON speichern
+            hp_file = os.path.join(model_folder, 'best-hyperparameters.json')
+            save_best_hp=best_hp[0].values
+            with open(hp_file, 'w') as json_file:
+                json.dump(save_best_hp, json_file, indent=4)
+
+            # 3. Modell mit besten Hyperparametern bauen & speichern
+            best_model = self.tuner.hypermodel.build(best_hp[0])
+            model_file = os.path.join(model_folder, 'best-model.h5')
+            best_model.save(model_file)
+
+            print(f"\n Modell für   {model_name} gespeichert:")
+            print(f"- Hyperparameter: {hp_file}")
+            print(f"- Modell:         {model_file}")
 
 
     def save(self, folder: str):
