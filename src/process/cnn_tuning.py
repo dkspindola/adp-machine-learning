@@ -83,7 +83,7 @@ class CNNTuning(Process,Serializable):
         #Trennen der Modelle
         self.tuner.search(x_train,
                           y_train_single,#{output_name.get_output_name(): y_train_single},#
-                            epochs=3, # TODO: ZUM DEBUGGEN VON 30 AUF 3 REDUZIERT ==================================================================== 
+                            epochs=30, # TODO: ZUM DEBUGGEN VON 30 AUF 3 REDUZIERT ==================================================================== 
                              validation_data=(x_validate, y_val_single),#validation_data=(x_validate, {output_name.value : y_val_single}), 
                             callbacks=[EarlyStopping(
                                 monitor=output_name.get_objective(),

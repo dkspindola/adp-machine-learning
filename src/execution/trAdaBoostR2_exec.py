@@ -93,9 +93,4 @@ class TrAdaBoostR2TrainingExecution:
             final_model=tradaboostr2_model.final_model,
             #training_progress=tradaboostr2_model.get_training_dokumentation(),
             save_folder=tradaboostr2_model.save_folder,
-        )
-
-
-
-        
-
+        )      

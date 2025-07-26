@@ -68,7 +68,7 @@ class CNNTuningExecution:
                 process.load_scaled_labels(data_folder)
             else:
                 process.load(data_folder)
-                
+            process.save_metadata(path)    
             process.start_three_models_tuning(output_name=output_name)
             process.save_single_model(path)
             

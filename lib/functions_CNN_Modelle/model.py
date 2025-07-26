@@ -96,7 +96,6 @@ def build_model(hp, window_size=10, n_features=11):
     
     return model 
 
-
 def build_model_output_vektor(hp, window_size=10, n_features=11):
     
     # CInputs Layer definieren (10er Window Size, 11 Features), wenn Window Size angepasst wird, hier auch anpassen
@@ -179,7 +178,7 @@ def bulid_model_one_output(hp,output_idf : OutputTarget, window_size=10, n_featu
     input_layer = layers.Input(shape=(window_size,n_features))
     
     # Hyperparameter für die Anzahl an Conv Layer
-    num_layers_conv = hp.Int('num_layers_conv', 1, 6)
+    num_layers_conv = hp.Int('num_layers_conv', 1, 6) # Erst mal lassen, Vergleichbarkeit zu anderen Ergebnissen 
     print(f'Anzahl an Conv Layers: {num_layers_conv}')
     
     # Hyperparameter für die Lernrate

@@ -31,3 +31,5 @@ class OutputTarget(Enum):
         ACHTUNG: DIe Reihnfolge der Werte in den Y-Daten muss damit übereinstimmen.
         """
         return list(OutputTarget).index(self)
+    
+    

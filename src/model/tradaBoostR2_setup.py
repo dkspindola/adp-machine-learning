@@ -7,7 +7,9 @@ from tqdm import tqdm
 
 from tensorflow import keras
 from tensorflow.keras.callbacks import Callback,EarlyStopping, CSVLogger 
-from src.model.build_model_for_TrAdaBoostR2 import build_model_combinedoutputs 
+from typing import Optional
+from src.data.output_type import OutputTarget
+from src.model.build_model_for_TrAdaBoostR2 import build_model_combinedoutputs, build_model_single_output 
 from src.model.sparse_layer_TrAdBoostR2 import SparseStackLayer
 from src.process.callback.live_plot_callback import LivePlotCallback
 from adapt.instance_based import TrAdaBoostR2
@@ -96,7 +98,7 @@ class TrAdaBoostR2ModelSetup:
     def get_training_dokumentation(self):
         return self.doku_training_initial
 
-    def set_data_for_training(self, x_source, x_target, x_val, y_val, y_source, y_target):
+    def set_data_for_training(self, x_source, x_target, x_val, y_val, y_source, y_target, output_target: OutputTarget = None):
         # Datensätze definieren
         self.x_source = x_source
         self.x_target = x_target
@@ -104,9 +106,14 @@ class TrAdaBoostR2ModelSetup:
         self.y_val = y_val
         self.y_source = np.squeeze(y_source)
         self.y_target = np.squeeze(y_target)
+        if not output_target is None:
+            output_idx = output_target.get_index()
+            self.y_source = self.y_source[:,output_idx]
+            self.y_target = self.y_target[:,output_idx]
+                    
         self.data_is_setted=True # Daten wurden gesetzt, Kontrolle hier nicht vorhanden, einfach aufpassen
 
-    def _build_tradaBoostR2_model(self):
+    def _build_tradaBoostR2_model(self, output_target: Optional[OutputTarget] = None, this_learning_rate=None):
         """
         ACHTUNG: Die Targetdaten werden hier bereits definiert
         Gibt ein TradaBoostR2 Modell zurück, das für das Training verwendet werden kann.
@@ -117,9 +124,26 @@ class TrAdaBoostR2ModelSetup:
             early_stopping = EarlyStopping(monitor="val_loss", patience=self.patience_model, restore_best_weights=True)
             self.used_callbacks_model.append(early_stopping)
         
+        #Unterschiedliche Outputstukturen für da szusammengefasste Modell und die einzelnen Modelle
+        # Modellfunktion abhängig vom Output-Target
+        if (output_target is not None and 
+            this_learning_rate is not None): # Leraningrate muss aus dem json Fild des Tuning genomen werden!!! # TODO Rdundant zu dem Training der single_models
+            
+            model_fn = lambda: build_model_single_output(
+                model_path=os.path.join(self.model_path,output_target.get_output_name(),"best-model.h5"),
+                output_type=output_target,
+                learning_rate=this_learning_rate
+            )
+        else:
+            model_fn = lambda: build_model_combinedoutputs(
+                self.model_path,
+                self.learningrate_model
+            )
+
         # Keras Wrapper, weil adapt keras benutzt
         regressor = KerasRegressor(
-            model= build_model_combinedoutputs(self.model_path, self.learningrate_model),
+            #model= build_model_combinedoutputs(self.model_path, self.learningrate_model),
+            model=model_fn,
             epochs=self.epochs_model,
             batch_size=self.batch_size_model,
             callbacks=self.used_callbacks_model,
@@ -135,7 +159,7 @@ class TrAdaBoostR2ModelSetup:
             verbose=1
         )
         
-    def execute_with_processdoku(self):
+    def execute_with_processdoku(self, output_target: Optional[OutputTarget] = None, this_learning_rate= None):
         """Trainiert ein Modell mit TrAdaBoostR2.
         Processdoku: In jeder iteration von TradaboostR2 wird der Trainingsfortschritt dokumentiert.
         Problem: Das dauert länger, und ich war nach sichten der Ergebnisse nicht unbedingt schlauer. 
@@ -144,7 +168,7 @@ class TrAdaBoostR2ModelSetup:
         start = time.time()
 
         # Tradaboost modell erzeugen
-        self._build_tradaBoostR2_model()
+        self._build_tradaBoostR2_model(output_target=output_target, this_learning_rate=this_learning_rate)
 
         # Training mit Fortschrittsanzeige
         training_progress = []
@@ -184,14 +208,18 @@ class TrAdaBoostR2ModelSetup:
         end = time.time()
         print(f"Training abgeschlossen in {end - start:.2f}s")
 
-    def execute_without_process_doku(self):
+    def execute_without_process_doku(self, output_target: Optional[OutputTarget] = None, this_learning_rate=None):
+        """
+        Die Variablen diehnen zur Definition von dem Tradaboosttraining mit dem einzelnen modellen, 
+        TODO Ggf. eine andere Lösung finden
+        """
         start = time.time()
 
         # Modell erstellen
-        self._build_tradaBoostR2_model()
+        self._build_tradaBoostR2_model(output_target=output_target, this_learning_rate=this_learning_rate)
 
         # Modell trainieren
-        self.tradaboost_model.fit(x=self.x_source, y=self.y_source,validation_data=(self.x_val,self.y_val))
+        self.tradaboost_model.fit(self.x_source, self.y_source,validation_data=(self.x_val,self.y_val))
         
         # Speichere finale Komponenten als Objektattribute
         self.tradaboost_model = self.tradaboost_model

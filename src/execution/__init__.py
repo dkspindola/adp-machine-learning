@@ -5,3 +5,4 @@ from src.execution.cnn_training_exec import CNNTrainingExecution
 from src.execution.cnn_validation_exec import CNNValidationExecution
 from src.execution.cnn_soft_start_exec import CNNSoftStartExecution
 from src.execution.trAdaBoostR2_exec import TrAdaBoostR2TrainingExecution
+from src.execution. trAdaBoostR2_single_model_exec import TrAdaBoostR2ModelSetup_SingleModel_Execution

@@ -78,7 +78,6 @@ class CNN3Models(Serializable):
                        epochs=30, validation_data=(x_test_scaled,[y_test[:, 0], y_test[:, 1], y_test[:, 2]]),
                        callbacks=[keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)])
 
-
     @classmethod    
     def hypermodel(cls,hp, output_idf: OutputTarget):
         return bulid_model_one_output(hp=hp,output_idf=output_idf)
