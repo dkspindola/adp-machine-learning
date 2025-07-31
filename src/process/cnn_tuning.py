@@ -69,6 +69,10 @@ class CNNTuning(Process,Serializable):
         self.hyperparameters = self.tuner.get_best_hyperparameters(num_trials=1)
     
     def start_three_models_tuning(self, output_name : OutputTarget):
+        """
+        Tuning der modelle mit je einem Modell für einen Output. 
+        Die Wahl, ob auf skalierten oder nicht skalierten Labels trainiert wird, wurde hie rbereits zuvor im prozess getroffen.
+        """
         x_train, x_validate = self.data[0].array, self.data[1].array
         y_train, y_validate = self.data[2].array, self.data[3].array
 

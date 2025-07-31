@@ -150,7 +150,7 @@ class TrAdaBoostR2ModelSetup:
             verbose=1
         )
 
-        self.tradaboost_model = TrAdaBoostR2(
+        self.tradaboost_model = TrAdaBoostR2( #Tradaboost von ADAPT!!!
             estimator=regressor,
             n_estimators=self.n_estimators_tradaBoostR2,
             lr=self.learningrate_TraDaBoostR2,

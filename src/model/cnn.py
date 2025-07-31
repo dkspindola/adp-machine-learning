@@ -91,7 +91,7 @@ class CNN(MachineLearningModel):
                        epochs=30, validation_data=(x_test_scaled,[y_test[:, 0], y_test[:, 1], y_test[:, 2]]),
                        callbacks=[keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)])
     
-    def fit_specific_output(self, data_file: str, optimizer: Optimizer, loss, metrics, selected_output: OutputTarget):#str = None):
+    def fit_specific_output(self, data_file: str, optimizer: Optimizer, loss, metrics, selected_output: OutputTarget, scaled_labels=False):#str = None):
         """
         Trains the model using the provided data and parameters.
         #TODO Redundant zu oben, erst mal debuggen dann löschen
@@ -102,9 +102,12 @@ class CNN(MachineLearningModel):
             metrics: Dict of metrics for evaluation.
             selected_output (str, optional): If provided, only the corresponding output will be trained (e.g., "Verstellweg_X").
         """
-        self.load_data(data_file)
+        self.load_data(data_file) # TODO Hier wird was geladen, mit unskalierten Labels
         x_train_scaled, x_val_scaled = self.data[0].array, self.data[1].array
-        y_train, y_val = np.squeeze(self.data[2].array), np.squeeze(self.data[3].array)
+        if scaled_labels:
+            y_train, y_val = np.squeeze(self.data[7].array), np.squeeze(self.data[8].array) # Achtung unscalierte Daten!!!
+        else:
+            y_train, y_val = np.squeeze(self.data[2].array), np.squeeze(self.data[3].array) # Achtung unscalierte Daten!!!
 
         # TODO ACHTUNG Reihnfolge muss stimmen!!!
         #if selected_output:
@@ -166,6 +169,10 @@ class CNN(MachineLearningModel):
 
         #ACHTUNG: Dese neu hinzugefügt, nach ADP
         self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_VALIDATE.value + '.npy'))) # 6
+        self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_TRAIN_SCALED.value + '.npy'))) # 7
+        self.data.append(NPY.from_file(os.path.join(folder, DataType.Y_TEST_SCALED.value + '.npy'))) # 8
+        
+
 
     def soft_start(self, data_file: str, optimizer: Optimizer, loss: list[str], metrics: dict[str, str], n_unfreezed_layers: int):
         """Performs a soft start by training only a subset of layers initially.
